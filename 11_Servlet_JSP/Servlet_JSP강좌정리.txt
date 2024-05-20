@@ -121,7 +121,7 @@ Servlet/JSP
 	 HelloTest
 	   ..
 	   java Resources
-	     src/main/java ( *.java 가 저장됨 )
+	     src/main/java ( *.java 가 저장됨, 서블릿)
 	     ..
 	   src
 	     main
@@ -148,6 +148,7 @@ Servlet/JSP
 		           com
 			     dto
 			       Person.class
+			       서블릿
 		       lib
 		       web.xml
 		    
@@ -167,7 +168,11 @@ Servlet/JSP
 	     - images
 	 나. 동적
 	     - jsp ( *.jsp ) <== html과 동일한 폴더에 저장. 즉 WEB-INF와 동일한 레벨
-	     - 서블릿(*.java)
+	                         html 처럼 비슷한 태그로 구성되었으나 자바코드를 포함할 수 있음.
+	     - 서블릿(*.java) <== src/main/java 에 저장. 반드시 패키지로 작성해야 된다.(*****)
+
+       =====> 최종적인 실행 결과는 html로 만들어져야 된다. (**********)
+
 
    3) web.xml
       - 배치 지시자 ( deployment descriptor )
@@ -238,7 +243,7 @@ Servlet/JSP
    
   * html 동작 정리
 
-          1) http://localhost:8090/xxx/hello.html
+          1)요청: http://localhost:8090/xxx/hello.html
     브라우저 ------------------------->   tomcat 서버 (8090)
                                            HelloTest ( 웹어플리케이션) <== 논리적인 이름 컨텍스트명:/xxx
 					        WEB-INF
@@ -249,15 +254,143 @@ Servlet/JSP
 						   있으면 찾은 hello.html 다운
 						   html은 서버에서 실행되지 않음. 그래서 정적(static)임.
           <-----------------------------------
-	    3) hello.html 다운
+	    3)응답: hello.html 다운
  4) 다운받고
    html 랜더링
 
-
-   * JSP 동작 정리
-
-         1) http://localhost:8090/xxx/world.jsp
+   * JSP 동작 정리 ( 외우기 )
+         1)요청: http://localhost:8090/xxx/world.jsp
    브라우저 ------------------------->   tomcat 서버 (8090)
                                            HelloTest ( 웹어플리케이션) <== 논리적인 이름 컨텍스트명:/xxx
 					        WEB-INF
 						world.jsp
+
+						2) world.jsp 찾기
+						   없으면 404 에러 발생
+						   있으면 찾은 jsp를 변환한다.
+						   (world_jsp.java 생성)
+						3) world_jsp.java 컴파일 (컴파일 에러가 발생될 수 있음)
+						   world_jsp.class 생성
+					   4)  world_jsp.class 실행 (실행되기 때문에 동적 컴포넌트임)
+                                             ==> 실행결과는 정적파일인 html로 나옴.
+	    <---------------------------------
+	       5) 응답: html 다운로드
+ 6) 다운받고
+   html 랜더링
+
+    * JSP 동작 3단계
+      1) 변환단계
+        world.jsp ---> world_jsp.java
+      2) 컴파일 단계
+      world_jsp.java --> world_jsp.class
+      3) 실행단계
+      world_jsp.class --> html
+
+
+
+7. 서블릿(Servlet) 작성
+
+  1) 저장 위치
+
+     - src/main/java 
+     - 반드시 패키지를 사용해야 됨.
+     - servlet-api.jar 에 포함된 패키지를 사용.
+       java EE API 문서 확인 가능.
+       java.oracle.com 
+
+  2) 문법
+
+      import javax.servlet.http.HttpServlet;	
+	
+    가. extends HttpServlet
+    나. 서비스 메서드 재정의
+       - 기본이 get 방식인 doGet()를 재정의하자.
+
+    다. 서비스 메서드인 doGet() 안에서 html 작성해서 응답처리
+
+    라. 서블릿 맵핑 (*************)
+       ==> 서블릿을 요청하는 url의 별칭을 설정하는 방법이다.
+       ==> 2가지 방식으로 설정할 수 있다.
+           a. web.xml (*****, Spring 에서 사용하는 방식임 )
+	   b. 어노테이션 ( @WebServlet("/별칭") )
+
+     * 서블릿 맵핑 관련 
+
+      OLD 방식: 현재 지원 안됨. 서블릿 맵핑 전 방식임.
+
+             http://localhost:8090/컨텍스트명/servlet/패키지를포함한서블릿명
+	
+	   ==> HelloServlet 의 OLD 방식?
+             
+	     http://localhost:8090/xxx/servlet/com.servlet.HelloServlet
+
+	   ==> 이슈 2가지 ?
+	       - 매우 길다.
+	       - 보안 취약.
+
+
+      NEW 방식: 서블릿 맵핑
+         
+       
+             OLD 방식:   http://localhost:8090/컨텍스트명/servlet/패키지를포함한서블릿명
+
+	 서블릿 맵핑 방식:  http://localhost:8090/컨텍스트명/서블릿맵핑
+
+	  @WebServlet("/hello") 로 설정했다면 다음과 같이 요청한다.
+
+	  http://localhost:8090/xxx/hello
+
+######################################################
+정리
+
+1. 환경설정
+   jdk
+   eclipse Enterprise 버전
+   tomcat 9
+     - servlet-api.jar
+       jsp-api.jar
+
+2. 3가지 컴포넌트
+ 
+  1) 종류
+   정적컴포넌트  : html
+
+   동적컴포넌트  : jsp
+               서블릿
+
+  2) 저장위치
+   
+     src/main/java
+                 서블릿(*.java)
+
+     HelloTest
+         WEB-INF
+         *.html
+	 *.jsp
+
+ 3) 요청 방법
+
+    html 과 jsp 요청방법:
+
+          http://localhost:8090/context명/html파일(jsp파일)
+	  http://localhost:8090/context명/폴더/html파일(jsp파일)
+
+
+    서블릿 요청방법:
+          http://localhost:8090/context명/서블릿맵핑   (**************)
+
+
+    * 서블릿맵핑2가지
+      가. web.xml
+      나. @WebServlet("/서블릿매핑")
+
+   ==> 최종적으로 html로 응답된다. (***************)
+
+
+4. 서블릿 작성방법
+
+   1) extends HttpServlet
+   2) 서비스 메서드 재정의 
+      - doGet()
+   3) 서비스 메서드에서  로직처리 및 html 작성후 응답
+   4) 서블릿 맵핑
