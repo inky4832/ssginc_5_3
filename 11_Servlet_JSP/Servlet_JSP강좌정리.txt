@@ -1,0 +1,163 @@
+
+Servlet/JSP
+
+1. 자바 개발 플랫폼
+
+  1) Java SE ( Java Standard Edition)
+      - 자바 spec.
+      - JDK 설치로 SE 환경이 구축됨. 
+      - rt.jar
+      - 개발할 수 있는 프로그램 형태: 로컬로 실행되는 프로그램.
+
+  2) Java EE ( Java Enterprise Edition)
+      - Servlet/JSP spec.
+      - Tomcat 서버 설치로 EE 환경이 구축됨.
+      - servlet-api.jar 와  jsp-api.jar
+      - 개발할 수 있는 프로그램 형태: 웹브라우저를 이용하는 웹사이트 개발.
+
+  3) Java ME ( Java Micro Edition )
+     - 소규모 디바이스에서 동작하는 프로그램 개발
+     - 예> 핸드폰, 셋탑박스, ...
+
+2. 환경설정
+
+  1) JDK 11
+  2) eclipse
+     - http://www.eclipse.org
+     - JDK 11를 지원하는 이클립스를 사용해야 됨.
+     - eclipse-jee-2022-06-R-win32-x86_64.zip
+
+  3) Tomcat 서버
+     - tomcat 9 버전 사용
+     - http://jakarta.apache.org
+     - servlet-api.jar 와  jsp-api.jar 지원됨.
+       패키지명이 javax.servlet 형식으로 시작됨.
+     - apache-tomcat-9.0.89.zip
+     
+       * Tomcat 10 
+       패키지명이 jakarta.servlet 형식으로 시작됨.
+
+ 
+3. eclipse 와 Tomcat 9 연동
+
+  1) eclipse 실행
+
+     - 인코딩 설정 ( UTF-8) 4개 확인
+
+       general > workspace 에서 utf-8로 설정.
+
+       web > css
+             html    utf-8로 설정.
+	     jsp 
+
+     - JDK 11로 설정하기 (****************)
+        preference > Java > Compiler  > 11로 변경.
+        preference > Java > installed JRE > 기존 jre 삭제하고 
+	           > Add 클릭 > Standard VM 선택 > JRE Home 에 C:\Program Files\Java\jdk-11 설정
+		   > Finish > Applys Close
+   
+   2) eclipse에 Tomcat 9 설정해서 연동
+	
+      - Severs 탭에 추가된 tomcat 더블클릭하고 Overview 탭 선택 3가지 설정을 변경한다.
+       가. server location 에서 Server Path 변경
+          - 두번째 라디오버튼으로 변경. ( Use Tomcat installation )
+
+       나. server location 에서 Deploy Path 변경
+          - C:\servlet_study\apache-tomcat-9.0.89\webapps 설정.
+
+       다. tomcat의 port 번호 변경
+          - 8080 에서 8090로 변경
+	   ( 변경하는 이유는 Oracle DB에 tomcat이 내장되어 있고 내부적으로 8080 사용함.
+	     충돌방지하기 위해서 8090로 변경)
+
+         * deploy path (배포 경로)
+	 - 우리가 만든 웹 어플리케이션을 Tomcat 서버가 클라이언트에게 서비스를 제공한다.
+	   이때 우리는 우리가 만든 웹 어플리케이션을 Tomcat 서버가 서비스할 수 있는
+	   특별한 디렉토리에 저장해야 된다. 이 작업을 하기 위한 저장 경로를 배포 경로라로 부른다.
+
+          - tomcat의 기본 배포경로는 C:\servlet_study\apache-tomcat-9.0.89\webapps
+          - tomcat의 기본 port 는 8080 
+
+   3) Tomcat 9 삭제 방법
+ 
+      preference > Server >  Runtime Enviroments > 설정된 tomcat 삭제
+     
+
+
+4. 프로젝트 생성
+
+  파일 > New > Dynamic Web Project 선택 
+
+  project name: HelloTest
+
+  web Module 화면
+
+   1) Context Root
+      - 
+
+   2) Content Directory
+      - 개발자가 만든 소스가 저장되는 디렉토리.
+      - 이클립스의 workspace에 저장됨.
+	예>
+	
+	eclipse의 project explorer 화면
+
+	 HelloTest
+	   ..
+	   java Resources
+	     src/main/java ( *.java 가 저장됨 )
+	     ..
+	   src
+	     main
+	        java       ( *.java 가 저장됨 )
+		webapp (*****)
+		    META-INF
+		      MANIFEST.MF
+		    WEB-INF
+		       lib
+		       web.xml
+		    
+		    hello.html
+		    test.css
+		    test.js
+		    test.png
+
+         실행후 tomcat의 webapps 폴더에 배포된 디렉토리 구조
+
+	    webapps
+	       HelloTest
+                    WEB-INF
+		       classes
+		           com
+			     dto
+			       Person.class
+		       lib
+		       web.xml
+		    
+		    hello.html
+		    test.css
+		    test.js
+		    test.png
+
+
+         * 3가지 컴포넌트
+	 가. 정적 ( src/main/webapp 폴더에 저장 )
+             - html ( *.html )
+	     - JS
+	     - CSS
+	     - images
+	 나. 동적
+	     - jsp ( *.jsp )
+	     - 서블릿(*.java)
+
+   3) web.xml
+      - 배치 지시자 ( deployment descriptor )
+      - 개발자가 만든 웹 어플리케이션의 전반적인 설정 정보 담당
+       ( 예> filter 등록, 서블릿맵핑, ... )
+
+       web.xml 대신에 어노페이션을 이용할 수도 있음.
+
+
+
+
+
