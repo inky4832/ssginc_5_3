@@ -93,7 +93,23 @@ Servlet/JSP
   web Module 화면
 
    1) Context Root
-      - 
+      - URL에서 사용
+       http://localhost:8090/context명/자원(html,css,js,image,jsp,서블릿)
+       - context명은 논리적인 이름으로
+        실제 tomcat이 webapps (배포경로)에 저장하고 있는
+	웹 어플리케이션을 선택하는 역할을 한다.
+	내부적으로 다음과 같이 key/value로 구성됨.
+
+	  context명   웹어플리케이션(webapps에 저장된 물리적인 디렉터리)
+	  --------------------------
+	    key        value
+	  
+	 예> a           x
+	     b          y
+
+        - context명 언제든지 변경 가능하고 대소문자 구별됨. ( 일반적으로 소문자로 사용)
+	  단 반드시 / 로 시작해야 됨.
+
 
    2) Content Directory
       - 개발자가 만든 소스가 저장되는 디렉토리.
@@ -117,13 +133,14 @@ Servlet/JSP
 		       lib
 		       web.xml
 		    
-		    hello.html
+		    hello.html (정적)
 		    test.css
 		    test.js
 		    test.png
+		    world.jsp (동적)
 
-         실행후 tomcat의 webapps 폴더에 배포된 디렉토리 구조
-
+         실행후 tomcat의 webapps 폴더에 배포된 디렉토리 구조는 다음과 같다.
+          tomcat
 	    webapps
 	       HelloTest
                     WEB-INF
@@ -134,11 +151,13 @@ Servlet/JSP
 		       lib
 		       web.xml
 		    
-		    hello.html
+		    hello.html 
 		    test.css
 		    test.js
 		    test.png
+		    world.jsp
 
+		    
 
          * 3가지 컴포넌트
 	 가. 정적 ( src/main/webapp 폴더에 저장 )
@@ -147,7 +166,7 @@ Servlet/JSP
 	     - CSS
 	     - images
 	 나. 동적
-	     - jsp ( *.jsp )
+	     - jsp ( *.jsp ) <== html과 동일한 폴더에 저장. 즉 WEB-INF와 동일한 레벨
 	     - 서블릿(*.java)
 
    3) web.xml
@@ -156,8 +175,89 @@ Servlet/JSP
        ( 예> filter 등록, 서블릿맵핑, ... )
 
        web.xml 대신에 어노페이션을 이용할 수도 있음.
+    
+       - Spring Framework에서 설정 정보를 web.xml로 사용함.
+
+5. Tomcat 서버에 배포하는 디렉터리 구조 (********)
+
+    webapps ( 배포경로의 홈디렉터리)
+       폴더(HelloTest) <================== '웹 어플리케이션' 이라고 부른다.
+             WEB-INF
+	        classes
+		    -*.class 저장
+	        lib
+		  - 나중에 mybatis.jar, mysql-connector.jar 같은 외부라이브러러 저장용
+                web.xml 
+ 
+	     *.html
+	     *.js
+	     *.css
+	     *png
 
 
 
+6. 클라이언트에서 웹브라우저에 요청하는 URL 문법 (******************)
+
+ 
+  1) 정적 컴포넌트 요청 ( 디렉터리 없는 경우 )
+
+   http://서버IP번호:port번호/context명/자원
+
+   예> http://localhost:8090/xxx/hello.html        // 논리적인 context명인 /xxx
+      http://localhost:8090/HelloTest/hello.html  // 물리적인 web application인 HelloTest 
+
+      http://localhost:8090/xxx/test.css
+      http://localhost:8090/xxx/test.js
+      http://localhost:8090/xxx/tomcat.svg
+
+   
+  2) 정적 컴포넌트 요청 ( 디렉터리 있는 경우 ) <== 일반적인 구조
+  
+    http://서버IP번호:port번호/context명/디렉터리/자원
+
+     http://localhost:8090/xxx/html/hello.html
+
+     http://localhost:8090/xxx/css/test.css
+     http://localhost:8090/xxx/js/test.js
+     http://localhost:8090/xxx/images/tomcat.svg
+
+  
+
+   3) 동적 컴포넌트인 JSP 요청 ( 디렉터리 없는 경우 )
+
+      http://서버IP번호:port번호/context명/자원
+
+   예> http://localhost:8090/xxx/world.jsp   
 
 
+   4) 동적 컴포넌트인 JSP 요청 ( 디렉터리 있는 경우 )
+
+      http://서버IP번호:port번호/context명/디렉터리/자원
+
+   예> http://localhost:8090/xxx/jsp/happy.jsp
+   
+  * html 동작 정리
+
+          1) http://localhost:8090/xxx/hello.html
+    브라우저 ------------------------->   tomcat 서버 (8090)
+                                           HelloTest ( 웹어플리케이션) <== 논리적인 이름 컨텍스트명:/xxx
+					        WEB-INF
+						hello.html
+
+						2) hello.html 찾기
+						   없으면 404 에러 발생
+						   있으면 찾은 hello.html 다운
+						   html은 서버에서 실행되지 않음. 그래서 정적(static)임.
+          <-----------------------------------
+	    3) hello.html 다운
+ 4) 다운받고
+   html 랜더링
+
+
+   * JSP 동작 정리
+
+         1) http://localhost:8090/xxx/world.jsp
+   브라우저 ------------------------->   tomcat 서버 (8090)
+                                           HelloTest ( 웹어플리케이션) <== 논리적인 이름 컨텍스트명:/xxx
+					        WEB-INF
+						world.jsp
