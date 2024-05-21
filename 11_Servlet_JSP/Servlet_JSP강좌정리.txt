@@ -491,11 +491,14 @@ Servlet/JSP
     즉 사용자가 맨 처음 요청하는 서블릿이 시작점 역할을 담당한다.
    - 서블릿을 명시적으로 new(객체생성) 안함.
      Tomcat이 서블릿/JSP의 LifeCycle(생성~소멸)을 관리한다.
-
+   - 서블릿은 단 한번만 생성됨. 
+     thread-unsafe: 인스턴스변수
+     thread-safe: doGet의 로컬변수 (*****)
 
 4. 서블릿의 LifeCycle 
 
   - 콜백 메서드가 제공됨.
+
   가. 서블릿 생성될 때 호출되는 콜백 메서드
     - init()
     - 용도: 서블릿이 생성될 때 초기화 작업 처리.
@@ -503,6 +506,9 @@ Servlet/JSP
        서블릿은 단 한 번만 생성됨. 따라서 init() 메서드도 단 한번만 호출됨.
        따라서 서블릿에서 인스턴스 변수를 작성하면 여러 사용자들이 공유하게 됨.(보안에 매우 취약해짐)
             인스턴스 변수 사용은 권장안함.
+       thread-unsafe 하다고 함.
+       thread-safe하게 작성하는 방법은 doGet의 로컬 변수로 작성해야 된다.
+
 
   나.  서블릿 요청될 때 호출되는 콜백 메서드
     - doGet/doPost
@@ -511,3 +517,114 @@ Servlet/JSP
   다.  서블릿 소멸될 때 호출되는 콜백 메서드
      - destory()
      - 용도: 서블릿이 소멸될 때 clean up 작업 처리.
+
+
+5.  서블릿의 응답처리
+ 
+  - 응답처리 개념
+    ==> 웹브라우저에서 볼 수 있도록 html 작성하는 처리의미.
+  - 담당
+    => doGet의 두 번째 파라미터인 HttpServletResponse 가 처리함.
+
+  - HttpServletResponse 인터페이스의 메서드 확인
+
+     response.addCookie(Cookie cookie): 쿠키 저장할 때 사용. 300개가 가능
+     response.addHeader(String name, String value) : 응답 헤더에 헤더값을 추가할 때 사용.
+     response.getHeader(String name) : 응답 헤더값을 얻을 때 사용.
+     response.getStatus():           응답에 대한 status 값
+    
+     response.sendRedirect(String location): 서블릿에서 JSP로 위임할 때 사용.
+     response.setContentType(String type)   :  웹 브라우저에게 처리할 데이터의 종류를 알려주는 기능.
+                                               MIME 타입이라고 부름
+					       Servers > web.xml 에서 종류 확인 가능.
+					       예> text/plain : 일반 텍스트로 전달
+					          text/html:   html로 전달
+						  application/json: JSON으로 전달
+
+     PrintWriter out = response.getWriter();
+     out.print(값);  // 이 값이 웹 브라우저에 출력됨.
+
+     System.out.println(값);  // tomcat의 console에 출력
+
+    
+
+
+     * 헤더 정보(header)
+
+                     요청
+		     (요청헤더가 전달됨)
+		      method:get
+		      Accept:text/html;~~~
+		      Accept-Language: ko-kr,~
+		      User_Agent: Mozilla~
+     웹브라우저 ----------------------------> 서버
+             <----------------------------
+	            응답
+		     (응답헤더가 전달됨)
+		     Content-Type:text/html; charset=utf-8
+
+ - 웹브라우저에 html 출력하는 방법
+
+   가. MIME 설정
+     response.setContentType("text/html");  // 한글처리: "text/html;charset=utf-8"
+
+   나. html작성 출력
+  
+     PrintWriter out = response.getWriter();
+     out.print("html코드");
+
+  ==> 서블리에서 하는 응답처리는 쉽지않다.
+     따라서 실제로는 서블릿에서 응답처리 하지 않음.
+     대신 JSP에 위임해서 응답처리를 작업한다.
+
+    예>
+       1) 현재상황
+                                      서버
+       웹브라우저 ------------------>  서블릿
+               <------------------
+
+      2) 변경된 구조
+
+                                     서버
+       웹브라우저 ------------------>  서블릿
+                                      |
+                                      | 위임( 2가지 방법)
+				          -response.sendRedirect(String location):
+					  -request.getRequestDispatcher(String path):
+               <------------------   jsp
+
+
+6.  서블릿의 요청처리
+
+  - 요청처리 개념
+    ==> 웹브라우저에서 요청했을 때 서블릿에서 처리하는 작업의미.
+       예> 사용자입력 데이터 얻기.
+           한글처리
+	   ..
+  - 담당
+    => doGet의 첫 번째 파라미터인 HttpServletRequest 가 처리함.
+
+  - HttpServletRequest 인터페이스의 메서드 확인
+
+     request.getContextPath() : 요청 URL에서 context명 얻을 때 사용.
+     request.getCookies():      쿠키를 배열로 반환. Cookie[]
+     request.getHeader(String name) : 요청헤더값 얻을 때 사용.
+     request.getQueryString():    요청 URL에서 ?name=value&name=value
+     request.getSession():      세션 얻을 때 사용. 매우중요(로그인시 사용됨)
+
+     request.setAttribute(key,value);  // key/value쌍으로 데이터 저장할 때 사용
+     request.getAttribute(key);        // key 이용해서 value 얻을 때 사용.
+     
+     request.setCharacterEncoding(String env):  "utf-8" 지정해서 한글처리 가능
+
+     // 다음 4개이 메서드로 사용자 입력 데이터를 얻을 수 있다.
+     request.getParameter(String name) :
+     request.getParameterNames():
+     request.getParameterValues(String name):
+     request.getParameterMap():
+
+
+     request.getRequestDispatcher(String path):  서블릿에서 JSP로 위임할 때 사용.
+     
+
+
