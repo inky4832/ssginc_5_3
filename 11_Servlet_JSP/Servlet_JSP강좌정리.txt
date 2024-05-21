@@ -429,4 +429,57 @@ Servlet/JSP
 		   getInitParameter(String name)
              |
 	     |
-	  MyServlet (우리가 만들 서블릿 )
+	 MyServlet (우리가 만들 서블릿 )
+	     ==> extends HttpServlet 코드를 작업을 하면
+	         웹브라우저의 요청을 처리할 수 있는 클래스가 된다.
+
+
+     - 서블릿을 작성하는 순서
+       1) extends HttpServlet
+       2) doGet(HttpServletRequest request, HttpServletResponse response)
+          또는 
+          doPost(HttpServletRequest request, HttpServletResponse response)
+	  메서드를 재정의.
+	  기본 서비스 메서드는 doGet().
+                 
+		    요청(url입력,링크클릭,새로고침,버튼클릭...
+		        submit )
+	  웹브라우저 ------------------------------------> 서버
+                        get요청 ------------------------> 서블릿의 doGet 요청처리
+                        post요청 ------------------------> 서블릿의 doPost 요청처리
+
+	       요청의 대부분은 GET 방식으로 요청됨.
+	       POST로 요청하는 단 하나의 경우는?
+	       <form method="post">
+
+	3) doGet/doPost 메서드에서 비즈니스로 로직 처리하고 html 작성해서 응답처리.
+	   - 요청처리(비즈니스 로직 처리)
+             ==> 사용자의 요청처리( 폼데이터 처리 예> id/pw 얻기)
+	     ==> 유효성 체크 ( DB 연동 )
+	     ==> HttpServletRequest request 담당 ( 메서드가 처리 )
+
+           - 응답처리
+	     ==> 비즈니스 로직 처리에 대한 결과(id/pw 맞다/틀리다)를
+	         사용자에게 알려주는 작업의미.
+             ==> HttpServletResponse response 담당 ( 메서드가 처리 )
+
+	4) 서블릿 맵핑
+	  
+	   - web.xml
+	   - @WebServlet("/서블릿맵핑값")
+
+
+
+2. 서블릿 맵핑 
+
+    - web.xml
+	    <servlet>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.servlet.TestServlet</servlet-class>
+	    </servlet>
+	    <servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/xxx3</url-pattern>
+	    </servlet-mapping>
+
+    - @WebServlet("/서블릿맵핑값") <== eclipse가 자동으로 지원 맵핑 방법
