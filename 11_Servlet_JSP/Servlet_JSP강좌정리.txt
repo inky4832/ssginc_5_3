@@ -10,9 +10,9 @@ Servlet/JSP
       - 개발할 수 있는 프로그램 형태: 로컬로 실행되는 프로그램.
 
   2) Java EE ( Java Enterprise Edition)
-      - Servlet/JSP spec.
+      - Servlet/JSP spec. ( 인터페이스 개념 ) <=== 나중에 실제 구현체는 Apache의 Tomcat  서버가 제공
       - Tomcat 서버 설치로 EE 환경이 구축됨.
-      - servlet-api.jar 와  jsp-api.jar
+      - servlet-api.jar 와  jsp-api.jar ( 구현체 )
       - 개발할 수 있는 프로그램 형태: 웹브라우저를 이용하는 웹사이트 개발.
 
   3) Java ME ( Java Micro Edition )
@@ -394,3 +394,39 @@ Servlet/JSP
       - doGet()
    3) 서비스 메서드에서  로직처리 및 html 작성후 응답
    4) 서블릿 맵핑
+######################################################################
+#####################################################################
+2일차
+
+1. 서블릿(Servlet)
+   - servlet-api.jar 안의 패키지 이용
+     javax.servlet.http 패키지의 HttpServlet 클래스 이용.
+   - Java EE API 문서 참고.
+     https://javaee.github.io/javaee-spec/javadocs/
+
+   - HttpServlet 의 계층구조
+
+
+       Servlet(인터페이스): init(),destory(),getServletConfig(),service(,) 
+                      , ServletConfig(인터페이스):getInitParameter(String name),getServletContext() 
+             |
+             |  
+       GenericServlet (추상클래스)
+             |   :  service(,)
+		   init(),destroy()
+		   getServletConfig()
+		   getServletContext()
+		   getInitParameter(String name)
+             |
+       HttpServlet (추상클래스)
+                 : doGet(HttpServletRequest request, HttpServletResponse response)
+		   doPost(HttpServletRequest request, HttpServletResponse response)
+		   doPut(,),doDelete(,)
+		   service(,)
+		   init(),destroy()
+		   getServletConfig()
+		   getServletContext()
+		   getInitParameter(String name)
+             |
+	     |
+	  MyServlet (우리가 만들 서블릿 )
