@@ -865,12 +865,27 @@ Servlet/JSP
 	  - 로그아웃할 때 사용
 
 
-   
-
    3) application scope
+
       - ServletContext 가 실체임
       - 데이터 저장기능도 포함
          setAttribute(String name,Object o) 로 저장.
          getAttribute(String name) 로 조회.
          removeAttribute(String name)로 삭제.
 	 getAttributeNames() 로 name부터 조회
+
+
+       - 저장된 데이터의 scope(lifecycle)?
+        ==> Tomcat 과  scope가 같다. 
+	   (정확히는 Web Module에 올라간 실행중인 Context와 scope 가 동일)
+
+      - ServletContext 얻는 방법 
+
+       ==> HttpServlet(사실은 ServletConfig에서 제공)에서 제공되기 때문에
+           doGet메서드내에서 getServletContext() 사용하면 된다.
+
+	  예> doGet(,){
+
+            ServletContext application = getServletContext();
+             application.setAttribute("application","유관순");
+	  }
