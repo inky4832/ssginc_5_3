@@ -889,3 +889,54 @@ Servlet/JSP
             ServletContext application = getServletContext();
              application.setAttribute("application","유관순");
 	  }
+
+
+3. JSP ( Java Server Page)
+
+  1) 특징
+    - 동적 컴포넌트 ( 서버에서 실행되어 동적으로 결과를 만듬 )
+    - *.jsp 확장자를 가짐.
+    - 서블릿은 요청하면 doGet/doPost 같은 서비스가 실행됨.
+      JSP는 요청하면 3단계를 거쳐서 실행됨.
+
+      가. 변환단계
+         .jsp --> .java ( 서블릿과 매우 유사한 코드임)
+	 
+      나. 컴파일 단계
+         *.java ----> *.class
+
+      다. 실행 단계
+         *.class ---> 결과반환( 결과는 html로 반환됨 )
+
+     - JSP내의 대부분의 코드는 html이다.
+       약간씩 자바코드가 포함된다.
+       따라서 화면처리는 JSP가 더 잘함.
+
+       Servlet의 대부분의 코드는 java코드이다.
+       약간씩 html가 포함된다.
+       따라서 비즈니스 로직처리는 Servlet이 더 잘함.
+
+
+ 2) JSP 구성요소
+
+    가. html 
+
+    # 다음 태그는 java와 관련있는 태그이다.
+    나. JSP 태그
+        *종류
+	 - directive 태그
+	        - page directive 태그 :  JSP에게 정보를 알려줄 때 사용된다.
+		                        정보종류? contenType, 자바의 import,...
+		      <%@ page  속성명="속성값"  속성명="속성값" ...         %>
+
+		- include directive 태그: <%@ include  file="속성값" %>
+		- taglib directive 태그 : <%@ taglib   prefix="속성값" uri="속성값"  %>
+
+	 - declaration 태그  : 인스턴스변수/인스턴스 메서드 ( 거의 사용 안함 )
+	     <%!  자바코드   %>
+	 - scriptlet 태그    : 서비스메서드내에서 코드 ( 매우 많이 사용됨 )
+	      <%   자바코드   %>  
+	 - expression 태그   : <%=  변수(값)  %>
+
+    다. EL 태그
+    라. JSTL 태그
