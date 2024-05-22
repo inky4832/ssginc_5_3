@@ -832,7 +832,40 @@ Servlet/JSP
 			 JSESSIONID=12F7E322D0401F556A4A27F4B0610037
           웹브라우저(엣지) ---------------------> Tomcat ( 요청한 엣지웹브라우저 id 저장함)
  
+   
+       - time-out 설정
+        이론적으로는 요청한 웹브라우저가 close되지 않으면 서버에 저장된 세션(HttpSession, 빨강박스)은
+	제거되지 않는다.
+	하지만 보안 이슈 때문에 요청한 웹브라우저가 close되지 않아도 일정 시간이 지나면 
+	자동으로 세션(HttpSession, 빨강박스)을 삭제시킨다.
+	 tomcat의 기본 time-out는 30분이다. ( servers > web.xml 에 설정되어 있음 )
 
+	* 개발자가 명시적으로 time-out 설정 가능
+
+	  1) web.xml 에서 설정 ( 단위는 minutes)
+	       <session-config>
+		<session-timeout>60</session-timeout>
+	       </session-config>
+
+	  2) 자바 코드로 설정 ( 단위 seconds )
+
+	      session.setMaxInactiveInterval(60*60);  // 3600초, 1시간
+
+
+      - 명시적으로 세션 데이터 삭제
+
+        가. 세션 엔트리 삭제
+	 
+	  sesssion.removeAttriute("key");
+	  - 장바구니에 저장된 요소 삭제하는 경우
+
+	나. 세션 전체 삭제(HttpSession, 빨강박스)
+
+	  session.invalidate()
+	  - 로그아웃할 때 사용
+
+
+   
 
    3) application scope
       - ServletContext 가 실체임
