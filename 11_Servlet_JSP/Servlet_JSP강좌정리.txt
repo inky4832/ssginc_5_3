@@ -298,7 +298,7 @@ Servlet/JSP
        java EE API 문서 확인 가능.
        java.oracle.com 
 
-  2) 문법
+  2) 문법 (*************)
 
       import javax.servlet.http.HttpServlet;	
 	
@@ -421,7 +421,8 @@ Servlet/JSP
        HttpServlet (추상클래스)
                  : doGet(HttpServletRequest request, HttpServletResponse response)
 		   doPost(HttpServletRequest request, HttpServletResponse response)
-		   doPut(,),doDelete(,)
+		   doPut(,)
+		   doDelete(,)
 		   service(,)
 		   init(),destroy()
 		   getServletConfig()
@@ -492,7 +493,7 @@ Servlet/JSP
    - 서블릿을 명시적으로 new(객체생성) 안함.
      Tomcat이 서블릿/JSP의 LifeCycle(생성~소멸)을 관리한다.
    - 서블릿은 단 한번만 생성됨. 
-     thread-unsafe: 인스턴스변수
+     thread-unsafe: 인스턴스변수 
      thread-safe: doGet의 로컬변수 (*****)
 
 4. 서블릿의 LifeCycle 
@@ -666,3 +667,48 @@ Servlet/JSP
  - 발생되는 경우는 
 
     클라이언트의 method="get|post" 과  서블릿의 doGet|doPost 가 일치하지 않는 경우에 발생됨.
+
+#############################################3
+2일차 리뷰
+
+1. 클라이언트에서 요청하는 4가지 작업
+
+
+  클라이언트(사용자)  ------------------------->  MySQl 서버
+                    select (Read)
+		    insert (Create)
+		    update (Update)
+		    delete (Delete)
+
+
+   클라이언트(사용자)      ------------------------------------->  Tomcat 서버
+   method:GET|POST                                              서블릿
+                                get(Read) ------------------>doGet
+                                post(create,delete,update)--->doPost
+
+   REST API:GET|POST|PUT|DELETE      get(Read) ------------------>doGet
+                                     post(Create)---------------->doPost
+				     PUT(update) ----------------->doPut
+				     DELETE(delete) --------------->doDelete
+
+
+2. HttpServletRequest 와 HttpServletResponse
+
+            요청(GET:기본)                    서블릿
+           - 사용자입력(폼데이터,파라미터)얻기
+	  String userid = request.getParameter("name값");
+웹브라우저 ------------------------------>  doGet(HttpServletRequest request,
+                                                HttpServletResponse response){}
+	<------------------------------
+	    응답
+	    response.setContentType("text/html;charset=utf-8");
+	    PrintWriter out = response.getWriter();
+	    out.print("html코드");
+	    ==> 서블릿이 직접 html코드를 작성하는 작업은 매우 고된 작업이다.
+                나중에는 JSP에게 위임해서 처리한다.
+
+    *request 와 response 는 어떤 변수?
+      - 로컬변수
+      - 요청~응답 사이의 lifecycle를 가짐.
+       따라서 첫번째 요청에서의 HttpServletRequest 와 
+            두번째 요청에서의 HttpServletRequest 는 서로 다른다. (*****************************)
