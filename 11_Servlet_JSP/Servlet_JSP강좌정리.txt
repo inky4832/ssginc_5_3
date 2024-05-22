@@ -788,7 +788,7 @@ Servlet/JSP
          removeAttribute(String name)로 삭제.
 	 getAttributeNames() 로 name부터 조회
 
-     - HttpSession 얻는 방법
+     - HttpSession 얻는 방법 ( 로그인 기능처리 )
         
 	 HttpSession session = request.getSession(); 
 	 HttpSession session = request.getSession(true); 
@@ -800,6 +800,40 @@ Servlet/JSP
           # If create is false and the request has no valid HttpSession, this method returns null.
            세션(session)이 있으면 현재 세션(session)을 반환하고 없으면 null 반환.
  
+      - 저장된 데이터의 scope(lifecycle)?
+        ==> 동일한 웹 브라우저와 scope가 같다.
+	    즉 요청한 웹브라우저를 close하지 않으면 session에 저장된 정보는 계속 유지된다.
+	    (요청한 웹브라우저를 close할 때까지 유지함)
+
+
+                      1번 요청                     SetServlet
+         웹 브라우저 -----------------------------> doGet(HttpServletRequest request, ... ){
+	 (크롬)					     session.setAttribute("xxx","이순신");
+	                                         }
+                 <-----------------------------
+                      응답
+
+                    2번 요청                       GetServlet
+                 -------------------------------->doGet(HttpServletRequest request, ... ){
+						     session.getAttribute("xxx"); // 이순신 반환
+	                                         }
+
+                            2번 요청               GetServlet
+          웹 브라우저  -------------------------------->doGet(HttpServletRequest request, ... ){
+	 (엣지)					     session.getAttribute("xxx"); //null 반환
+	                                         }
+
+
+      - tomcat이 요청하는 웹브라우저의 정보를 알고 있다. (JSESSIONID 값을 이용)
+                         id전송
+			 JSESSIONID=5B5C1DC28B5133BE0E7B19931C4EC058
+          웹브라우저(크롬) ---------------------> Tomcat ( 요청한 크롬웹브라우저 id 저장함)
+	                 id전송
+			 JSESSIONID=12F7E322D0401F556A4A27F4B0610037
+          웹브라우저(엣지) ---------------------> Tomcat ( 요청한 엣지웹브라우저 id 저장함)
+ 
+
+
    3) application scope
       - ServletContext 가 실체임
       - 데이터 저장기능도 포함
