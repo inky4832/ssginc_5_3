@@ -712,3 +712,72 @@ Servlet/JSP
       - 요청~응답 사이의 lifecycle를 가짐.
        따라서 첫번째 요청에서의 HttpServletRequest 와 
             두번째 요청에서의 HttpServletRequest 는 서로 다른다. (*****************************)
+
+####################################
+3일차
+
+1. 요청처리
+  
+  - request.getParameter("name"):String
+
+  - request.getParameterValues(String name): String []
+   예> checkbox
+   동작방식은 check된 값만 서버에 전달이 된다.
+
+
+  - 이름을 먼저 조회하고 나중에 값을 얻을 수 있다.
+
+    request.getParameterNames(): Enumeration<String>>
+
+   
+   * java.util.Iterator  vs  java.util.Enumeration
+
+     가. Iterator 사용방법
+
+        while(ite.haxNext()){
+
+	       ite.next();
+	}
+
+     나. Enumeration 사용방법
+
+        while(enu.hasMoreElements()){
+
+	       enu.nextElement();
+	}
+
+
+2. scope (lifecycle)
+ 
+ - 자바의 변수에서 사용했던 scope와 비슷
+   예> 로컬변수 : 메서드 호출 ~ 메서드 종료
+
+      인스턴스 변수: 객체생성~객체소멸
+      클래스 변수(static): 프로그램 실행 ~ 프로그램 종료
+
+ - 서블릿에서 사용하는 3가지 scope 
+   
+   1) request scope
+      - HttpServletRequest 가 실체임
+      - 데이터 저장기능도 포함
+         setAttribute(String name,Object o) 로 저장.
+         getAttribute(String name) 로 조회.
+         removeAttribute(String name)로 삭제.
+	 getAttributeNames() 로 name부터 조회
+
+   2) session scope
+      - HttpSession 가 실체임
+      - 데이터 저장기능도 포함
+         
+	 setAttribute(String name,Object o) 로 저장.
+         getAttribute(String name) 로 조회.
+         removeAttribute(String name)로 삭제.
+	 getAttributeNames() 로 name부터 조회
+
+   3) application scope
+      - ServletContext 가 실체임
+      - 데이터 저장기능도 포함
+         setAttribute(String name,Object o) 로 저장.
+         getAttribute(String name) 로 조회.
+         removeAttribute(String name)로 삭제.
+	 getAttributeNames() 로 name부터 조회
