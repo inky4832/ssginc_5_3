@@ -940,3 +940,84 @@ Servlet/JSP
 
     다. EL 태그
     라. JSTL 태그
+
+#############################################
+3일차 리뷰
+
+1. 서블릿(servlet)
+ 
+  1) 서블릿의 계층구조
+
+
+      Servlet(인터페이스, init(),destory()..) , ServleConfig(인터페이스, getServletContext())
+          |
+      GenericServlet(추상클래스, ....)
+          |
+      HttpServlet (추상클래스, doGet|doPost|doPut|doDelete,....)
+          |
+      MyServlet
+
+  2) 서블릿 작성방법
+
+    가. extends HttpServlet
+    나. doGet(HttpServletRequest request, HttpServletResponse response){}
+       /doPost 재정의
+    다. 요청처리/응답처리 구현
+
+       -요청처리
+        : HttpServletRequest request 이용
+
+        : 사용자 입력 데이터 얻기
+	  ==> String value = request.getParameter(name);  // request.getAttribute(name) 구별필요.
+              String []values = request.getParamterValues(name);
+	
+	      //먼저 name값 조회
+	      Enumeration<String> enu = request.getParameterNames();
+	      while(enu.hasMoreElements()){
+                   String name = enu.nextElement();
+		   String value = request.getParameter(name);
+	      }
+	: POST 한글처리
+	  ==> request.setCharacterEncoding("utf-8");
+
+	: 세션(빨강 박스) 얻기
+	  
+	  # 세션이 있으면 존재하는 세션을 반환하고 없으면 새로 생성해서 반환.
+	   HttpSession session = request.getSession();
+	   HttpSession session = request.getSession(true);
+          --------------------------------------------------
+          # 세션이 있으면 존재하는 세션을 반환하고 없으면 null 반환
+	   HttpSession session = request.getSession(false);
+
+
+       -응답처리
+        : html 작성 결과물을 
+	  클라이언트로 전송.
+	: HttpServletResponse response
+
+	: html 작성방법
+
+	  가. 웹브라우저에게 제공할 content의 정보를 알려줘야 됨.
+	     ( MIME 타입 설정이라고 부름)
+
+		response.setContentType("text/html;charset=utf-8");
+
+
+          나. 실제 html 전송 ( java i/o 사용 )
+	   
+	    PrintWriter out = response.getWriter();
+	    out.print("html작성");
+
+     라. 서블릿 매핑
+        - web.xml
+	- @WebServlet("/서블릿 매핑")
+
+2. JSP ( Java Server Page )
+
+ - 내부적으로 서블릿(servlet)으로 실행됨.
+ - 3단계
+
+ 가. 변환단계
+   a.jsp --> a_jsp.java ( 서블릿 )
+ 나. 컴파일단계
+ 다. 실행단계
