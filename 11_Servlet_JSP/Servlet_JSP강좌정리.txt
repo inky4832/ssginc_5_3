@@ -1312,6 +1312,7 @@ Servlet/JSP
           - url이 변경됨. ( /xxx  --> a.jsp )
 	  - 서블릿에서 request scope에 저장된 데이터는
 	    리다이렉트된 jsp에서 참조 불가 (null 반환)
+	    따라서 session scope 또는 application scope를 사용해야 된다.
 
 
 
