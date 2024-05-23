@@ -1277,7 +1277,53 @@ Servlet/JSP
                    요청 (잘함 )
       웹브라우저 -----------------------> 서블릿
                                          | 
-					 | 위임처리  
+					 | 위임처리 ( 요청 )  
                                          |
               <----------------------  jsp
 	          응답 ( 잘함)
+
+
+    3) 위임처리 방법 2가지
+
+     가. 리다이렉트(redirect) 
+	- HttpServletResponse 이용
+        - 문법:
+	 public void doGet(HttpServletRequest request, HttpServletResponse response){
+	  
+	   
+	   response.sendRedirect("타겟");
+         }
+     나. 포워드(forward)
+        - HttpServletRequest 이용
+
+	- 문법:
+        
+	 public class MainServlet extends HttpServlet{
+	 public void doGet(HttpServletRequest request, HttpServletResponse response){
+
+	     RequestDispatcher dis = request.getRequestDispatcher("a.jsp");
+	                    dis.forward(request, response);
+
+	 }
+                                                      서버
+               1) 요청
+     웹브라우저 ------------------>    MainServlet("/xxx") 2) doGet실행
+                                                    HttpServletRequest request(100번지) 생성
+						     request(100번지).setAttribute("xxx","홍길동")
+                                     |
+				     |  3)포워드 위임(요청)
+				         request.getRequestDispatcher("a.jsp")
+				         dis.forward(request(100번지), response);
+	    <--------------    a.jsp
+  	                     <%
+                                 request(100번지).
+				 request(100번지).getAttribute("xxx")
+			     %>
+	==> forward 방식은 서블릿을 요청할 때 생성했던 request를 
+	    jsp로 위임(요청)할때도 재사용한다.
+	    따라서 하나의 request로 서블릿도 요청하고 jsp도 요청하는 방식으로서
+	    request를 확장시킬수 있는 개념이다.
+	==> 서블릿에서 request.setAttribute(key,value)로 저장된 데이터를
+	    JSP에서 request.getAttribute(key) 하면 value를 얻을 수 있다.
+	==> 브라우저 url 변경 안됨
+	    서블릿맵핑값으로 계속 유지됨.
