@@ -1293,6 +1293,28 @@ Servlet/JSP
 	   
 	   response.sendRedirect("타겟");
          }
+
+
+                    1) 요청(/xxx)
+     웹브라우저 ------------------>    MainServlet("/xxx") 2) doGet실행
+                                                 HttpServletRequest request(100번지) 생성
+						 request(100번지).setAttribute("xxx","홍길동")
+						 3)
+                                                 response.sendRedirect(" a.jsp");
+             <-------------------
+	            4)응답(서블릿이 응답)
+
+                   5) 재요청(a.jsp)
+              ------------------>  a.jsp   HttpServletRequest request(200번지)
+              <------------------          request.getAttribute("xxx"); null 반환
+	            6)응답
+
+          - url이 변경됨. ( /xxx  --> a.jsp )
+	  - 서블릿에서 request scope에 저장된 데이터는
+	    리다이렉트된 jsp에서 참조 불가 (null 반환)
+
+
+
      나. 포워드(forward)
         - HttpServletRequest 이용
 
