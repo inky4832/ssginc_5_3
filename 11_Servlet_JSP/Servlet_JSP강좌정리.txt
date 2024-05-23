@@ -1068,7 +1068,11 @@ Servlet/JSP
 
 
 	
-		- include directive 태그: <%@ include  file="속성값" %>
+		- include directive 태그: 화면을 재사용할 때 사용.
+		
+		       <%@ include  file="속성값" %>
+
+
 		- taglib directive 태그 : <%@ taglib   prefix="속성값" uri="속성값"  %>
 
 	 - declaration 태그  : - 인스턴스변수/인스턴스 메서드 ( 거의 사용 안함 )
@@ -1211,5 +1215,33 @@ Servlet/JSP
 
     다. EL 태그
     라. JSTL 태그
-
+      - taglib directive 태그 : <%@ taglib   prefix="속성값" uri="속성값"  %> 사용
    
+
+2. 화면 재사용
+
+ 1) include 디렉티브 이용한 방법. ( 정적인 방법 )
+
+
+    jsp05_화면재사용1_include디렉티브.jsp               copyright.jsp
+
+   <body>
+	내용
+	<hr>
+	<!-- copyright 위치 -->
+	<%@ include file="copyright.jsp"%>
+  </body>
+
+ 
+ 2) jsp include 액션 태그 이용한 방법. ( 동적인 방법 )
+
+   <body>
+	내용
+	<hr>
+	<!-- copyright 위치 -->
+	<jsp:incldue  page="copyright.jsp"  flush="true" />
+  </body>
+
+
+
+3. 서블릿에서 JSP로 위임 (*********************)
