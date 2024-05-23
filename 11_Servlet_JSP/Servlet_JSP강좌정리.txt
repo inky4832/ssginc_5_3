@@ -1019,5 +1019,197 @@ Servlet/JSP
 
  가. 변환단계
    a.jsp --> a_jsp.java ( 서블릿 )
+   ==>  a_jsp.java 는 서블릿에서 구현했던 작업들이 모두 구현이 되어 있음.
+
+
+      서블릿(직접)                  JSP(변환된 서블릿)
+      extends HttpServlet         extends JspBaseServlet
+      doGet/doPost                _jspService(HttpServletRequest request, 
+                                               HttpServletResponse response)
+
+      doGet(HttpServletRequest x,
+       HttpServletResponse y){}
+
+       out.print("<html>")              out.write("<html>")
+
+
+
+
  나. 컴파일단계
  다. 실행단계
+
+ - 서블릿으로 만들수 있으면 JSP로도 구현이 가능함.
+
+ ############################################################
+
+4일차
+
+1. JSP 구성요소 ( 태그 형태로 구성됨 )
+
+    가. html 
+
+    # 다음 태그는 java와 관련있는 태그이다.
+    나. JSP 태그
+        *종류
+	 - directive 태그
+	        - page directive 태그 :  JSP에게 정보를 알려줄 때 사용된다.
+		                        정보종류? contenType, 자바의 import,...
+		                  <%@ page  속성명="속성값"  속성명="속성값" ...         %>
+		                     : 여러번 사용이 가능
+
+			<%@ page contentType="text/html;charset=utf-8" %>
+			 ==> 서블릿의 response.setContentType("text/html;charset=utf-8") 기능.
+	                
+			<%@ page import="java.util.ArrayList" %> 
+                        <%@ page import="java.util.Date" %>
+			<%@ page import="java.util.Date,java.util.ArrayList" %>
+			 ==> 서블릿의 import java.util.ArrayList;
+			            import java.util.Date; 
+
+
+	
+		- include directive 태그: <%@ include  file="속성값" %>
+		- taglib directive 태그 : <%@ taglib   prefix="속성값" uri="속성값"  %>
+
+	 - declaration 태그  : - 인스턴스변수/인스턴스 메서드 ( 거의 사용 안함 )
+	               <%!  자바코드(인스턴스변수|메서드)   %>
+			      - 여러번 사용 가능	
+		       예>
+		           <%!
+			       int num=10;
+			       public void a(){
+			          System.out.println(num);
+			       }
+			   %>
+			  ==> 서블릿에서는
+			       
+			        public class MyServlet extends HttpServlet{
+
+                                     int num=10;
+			             public void a(){
+				        System.out.println(num);
+				     } 
+                                     public void doGet(){}
+				}
+
+
+	 - scriptlet 태그    : -서비스 메서드(doGet/doPost)내에서 코드 ( 매우 많이 사용됨 )
+	                      <%   자바코드   %>  
+			      - 여러번 사용 가능
+			   예>
+			     서블릿의 doGet() 구현 코드예-1
+			     pulic void doGet(HttpServletRequest x,
+			                      HttpServletResponse y){
+				  
+				  int n = 10;
+				  int [] arr = {10,20};
+				  for(int k: arr){
+                                     System.out.println(k);
+				  }
+
+			     }
+
+			     JSP에서는 다음과 같이 표현한다.- 1 
+			     <%
+                                  int n = 10;
+				  int [] arr = {10,20};
+
+			     %>
+			     <%
+                                 for(int k: arr){
+                                     System.out.println(k);
+				  }
+ 
+			     %>
+
+	
+	                    서블릿의 doGet() 구현 코드예-2
+			     pulic void doGet(HttpServletRequest x,
+			                      HttpServletResponse y){
+				  
+				 String userid =
+				   x.getParamter("userid");
+				 
+				 HttpSession session= x.getSession();
+
+				 x.setCharacterEncoding("utf-8");
+
+				 y.setContentType("text/html;charset=utf-8");
+				 PrintWriter out = y.getWriter();  
+				 out.print("<html>");
+			     }
+	
+			    JSP 표현-2
+			    =>변환하면 항상 _jspService(HttpServletRequest request,
+			                             HttpServletResponse response){
+						     String userid = request.getParamter("userid");
+						     }
+			    <%
+                                   String userid = request.getParamter("userid");
+				   HttpSession session= request.getSession();
+
+				    request.setCharacterEncoding("utf-8");
+
+			    %>
+			   
+				
+			   서블릿의 doGet() 구현 코드예-3
+			     pulic void doGet(HttpServletRequest request,
+			                      HttpServletResponse response){
+				  
+				 String userid =
+				   request.getParamter("userid");
+
+				 request.setAttribute("xxx","이순신");
+				 
+				 HttpSession session= request.getSession();
+				 session.setAttribute("xxx","홍길동");
+
+				 request.setCharacterEncoding("utf-8");
+
+				 ServletContext application = getServletContext();
+				 application.setAttribute("xxx","유관순");
+
+				 response.setContentType("text/html;charset=utf-8");
+				 PrintWriter out = response.getWriter();  
+				 out.print("<html>");
+			     }
+
+			  JSP 표현-3
+			    =>변환하면 항상 _jspService(HttpServletRequest request,
+			                             HttpServletResponse response)가 자동생성됨.
+                            => 항상 자동으로 선언되는 변수가 있음.
+                                   HttpSession session;
+                                   ServletContext application; 
+				   ServletConfig config;
+				   JspWriter out;  // PrintWrtier 동일 기능
+                            <%
+			        // 내장변수(내장객체) 라고 부른다.
+                                 request.메서드
+				 response.메서드
+                                 session.메서드
+				 application.메서드
+				 config.메서드
+				 out.print("값");
+			    %>
+
+	 - expression 태그   : <%=  변수(값)  %>
+	                      <%  out.print("값"); %> 동일한 기능.
+
+
+        * 서블릿 코드
+
+	  public void doGet(HttpServletRequest request,
+	                    HttpServletResponse response){
+
+             List<String> list = Arrays.asList("홍길동","이순신");
+
+	     out.print
+
+
+
+
+    다. EL 태그
+    라. JSTL 태그
+
+   
