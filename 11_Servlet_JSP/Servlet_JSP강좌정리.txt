@@ -1513,3 +1513,11 @@ Servlet/JSP
       
        압축풀고 lib 폴더에 가서 2개의 jar 파일을 
        생성된 웹 프로젝트 WEB-INF/lib 폴더에 복사한다.
+
+   3) 사용방법
+
+     가. lib 폴더에 가서 2개의 jar 파일 복사
+     나. 서블릿 만들고 scope에 저장.
+        ==> scope에 저장된 데이터를 EL+JSTL 이용해서 핸들링함.
+
+     다. JSP 파일에서 <%@ taglib prefiex=""  uri="" %> 설정.
