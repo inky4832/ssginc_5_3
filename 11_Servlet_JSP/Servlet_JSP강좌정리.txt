@@ -1363,14 +1363,60 @@ Servlet/JSP
 
     - 2개의 jar파일을 build path로 설정.
 
-  2) EE 버전 아키텍쳐
-                          EmpService(인터페이스)
-    EmpListServlet  <----> EmpServiceImpl    <-----------> EmpDAO <--------> MySQL
+  2) EE 버전 아키텍쳐 (***********)
 
-         |
-	 |
-       list.jsp
+				  EmpService(인터페이스)
+브라우저->	    EmpListServlet  <----> EmpServiceImpl    <-----------> EmpDAO <--------> MySQL
+
+		 |
+		 |
+	<---  list.jsp
 
    - 2개의 jar파일을 build path로 설정하지 않고
      WEB-INF/lib 폴더에 jar 복사한다.
      자동으로 build path됨.
+
+
+######################################################
+5일차
+
+1. EL ( Expression Language )
+
+  1) JSP의 구성요소
+    - html
+    - jsp 태그
+        --> expression tag: <%= 값 %> <== 값을 브라우저에서 출력됨. <% out.print(값) %> 동일기능.
+    - EL
+    - JSTL
+
+  2) 문법:
+     - ${표현식(값)|key}
+  
+  3) 기능 및 특징
+     - 브라우저에서 출력됨
+     - ${리터럴값} <== 리터럴값이 브라우저에 출력
+       ${리터럴값+1} <== 산술연산 가능
+       ${리터럴값>1} <== 비교연산 가능
+       ${리터럴값>1 && 리터럴값 <20} <== 논리연산 가능
+
+  
+     - ${key}
+       => 서블릿에서 scope에 저장할 때 지정한 key값으로서
+          자동으로 key에 해당하는 데이터를 얻고 웹 브라우저에 출력함.
+
+	 # 서블릿 작업
+	  //1. request scope에 저장
+	  request.setAttribute("userid", "홍길동");
+	 
+	 # JSP 작업
+
+	   가. <% %> 이용
+                <%
+		   String userid = 
+		       (String)request.getAttribute("userid");
+		   out.print(userid);
+		%><br>
+
+	   나. %{key} 이용
+
+	       ${userid}<br>
