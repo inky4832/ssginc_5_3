@@ -1387,10 +1387,11 @@ Servlet/JSP
     - jsp 태그
         --> expression tag: <%= 값 %> <== 값을 브라우저에서 출력됨. <% out.print(값) %> 동일기능.
     - EL
-    - JSTL
+    - JSTL ( EL과 같이 사용됨 )
 
   2) 문법:
      - ${표현식(값)|key}
+      ==> servlet에서 scope에 저장할 때 사용된 key값임
   
   3) 기능 및 특징
      - 브라우저에서 출력됨
@@ -1420,3 +1421,95 @@ Servlet/JSP
 	   나. %{key} 이용
 
 	       ${userid}<br>
+
+     - DTO 사용
+           # 서블릿
+	   request.setAttribute("user", new User("홍길동", 20));
+         
+	    
+	   # JSP
+               <%
+		    User user=
+		    (User)request.getAttribute("user");
+		   String username=user.getUsername();
+		   int age = user.getAge();
+		%>
+		이름:<%= username %><br>
+		나이:<%= user.getAge() %><br>
+		<hr>
+		이름:${user.username}<br>
+		나이:${user.age}<br>
+
+     - List 사용
+
+          # servlet
+	    List<User> list = Arrays.asList(new User("홍길동1", 20),
+					    new User("홍길동2", 30));
+		
+	    request.setAttribute("userList", list);
+
+           # jsp
+
+           <%
+			   List<User> list =
+			    (List<User>)request.getAttribute("userList");
+
+			/*     User user1 = list.get(0);
+			    User user2 = list.get(1); */
+		    
+		%>
+		이름1:<%= list.get(0).getUsername() %><br>
+		나이1:<%= list.get(0).getAge() %><br>
+		이름2:<%= list.get(1).getUsername() %><br>
+		나이2:<%= list.get(1).getAge() %><br>
+
+		<hr>
+		${userList}<br>
+		이름1:${userList[0].username}<br>														
+		나이1:${userList[0].age}<br>
+
+		이름2:${userList[1].username}<br>
+		나이2:${userList[1].age}<br>
+
+
+      4) 명시적인 scope 지정
+
+         <h1>EL3- scope에 저장된 데이터 출력시 명시적으로 scope지정</h1>
+	request scope: ${requestScope.userid}<br>
+	session scope: ${sessionScope.userid}<br>
+	application scope: ${applicationScope.userid}<br>
+
+2.  JSTL( Jsp Standard Tag Library )
+
+  1) 개요
+   - JSP에서 커스텀 태그를 사용하자.
+   - 커스텀 태그 작성 방법
+      java 클래스(IF.java) + 태그 정의서(TLD 파일, if태그정의)
+       ==> *.class + *.tld
+           ( *.jar )
+     예> # jsp코드
+
+         <if>                  public class IF{
+	 
+	                       }
+
+	 </if>
+    
+     결론은 선배개발자 및 포털사이트등이 커스텀태그를 만들었을 것이다.
+     1000개 --------> 추려서 표준(Standard)으로 제공했음. (Apache에서 제공한 커스텀 라이브러리를 사용할 것임)
+                      이 표준화된 커스텀 태그를 JSTL이라고 부름.
+		      JSTL에는 다양한 기능의 태그가 제공됨( 반복,조건,...)
+                     정확히는 JSTL는 spec임.
+
+   2) JSTL spec의 구현체 (Apache에서 제공)
+    
+     - jakarta.apache.org 에서 다운
+
+       https://tomcat.apache.org/taglibs/standard/ 
+
+       최신버전: Standard 1.2
+       사용버전: Standard 1.1 (이유는 샘플제공,  standard-examples.war )
+
+      
+       압축풀고 lib 폴더에 가서 2개의 jar 파일을 
+       생성된 웹 프로젝트 WEB-INF/lib 폴더에 복사한다.
