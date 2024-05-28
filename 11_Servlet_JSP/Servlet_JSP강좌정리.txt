@@ -1574,7 +1574,11 @@ Servlet/JSP
 					    response.sendRedirect("a.jsp");
 					 }
 
-			
+			         * 세션 삭제
+				   -엔트리 삭제: session.removeAttribute("x");
+				   -세션자체삭제: session.invalidate(); //로그아웃시 사용
+
+				   -time-out지정삭제: session.setMaxInactiveInterval(초)
 					
 				    
     클라이언트에 저장:쿠키
@@ -1655,8 +1659,42 @@ ShopMiniMall 프로젝트
 
 
 
-웹브라우저 ----------> LoginUIServlet ("/login")
+웹브라우저 ----------> LoginUIServlet ("/login") 
 
                           | 요청위임(forward/redirect)
 
 	 <----------    loginForm.jsp 
+
+
+6. 로그인
+
+
+        id/pw
+웹브라우저 ------> LoginServlet ("/login-exec") -------> MemberServiceImpl -------> MemberDAO
+
+                          | 요청위임(forward/redirect)
+
+	 <----------    jsp
+
+
+ * JSTL 사용
+  - 2개의 jar 파일 /WEB-INF/lib 폴더에 복사
+  - jsp에서 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 설정.
+
+
+7. 로그아웃
+
+웹브라우저 ----------> LogoutServlet ("/logout") 
+
+                          | 요청위임(forward/redirect)
+
+	 <----------    jsp 
+
+
+8. mypage
+
+웹브라우저 ------> MyPageServlet ("/mypage") -------> MemberServiceImpl -------> MemberDAO
+
+                          | 요청위임(forward/redirect)
+
+	 <----------    mypage.jsp
