@@ -1522,6 +1522,65 @@ Servlet/JSP
 
      다. JSP 파일에서 <%@ taglib prefiex=""  uri="" %> 설정.
 
+###########################################################################
+3. 세션 관리 ( session tracking, 연결 관리) <== 클라이언트(웹브라우저)와 서버(tomcat) 연결관리
+
+  1) HTTP 프로토콜 특징
+     - connectionLESS
+     - stateLESS
+              a.요청
+    브라우저 ----------------------> 서버 (b.요청에대한작업)
+           <---------------------
+	      c.응답
+   d.화면랜더링(a.jsp)                   c 이후에 연결이 끊어짐
+             e. 요청
+           ------------------------> f.요청에대한작업
+	   <---------------------
+	      g.응답                  g 이후에 연결이 끊어짐
+   h.화면랜더링(b.jsp)  
+
+
+   2) 방법 2가지
+
+    클라이언트                            서버
+     브라우저                           a.jsp(데이터:홍길동)
+                                      b.jsp
+
+
+                                     서버에 저장: 세션
+				               HttpSession 이용
+                                               저장되는 데이터는 Object임(거의 모든 데이터 가능)
+																# a.jsp 해야되는 작업 ( 데이터 저장역할)			                                 - HttpSession 얻기
+											       					 # 세션이 있으면 반환하고 없으면 새로 생성해서 반환
+				         HttpSession session = request.getSession();
+					 HttpSession session = request.getSession(true);
+                                         -----------------------------------------------
+                                         # 세션이 있으면 반환하고 없으면 null 반환
+					 HttpSession session = request.getSession(false);
+				       
+				       - 데이터 저장
+				         session.setAttribute("x","홍길동");
+					
+				       # b.jsp 해야되는 작업 ( 데이터 사용 역할)
+                                        - HttpSession 얻기
+                                          HttpSession session = request.getSession();
+
+					- 데이터 얻기
+					 String n = (String)session.getAttribute("x");
+					 if(n!=null){
+                                             sysout(n.length); 
+					 }else{
+                                            //a.jsp를 거치도록 처리(로그인 작업을 먼저 하도록 처리)
+					    response.sendRedirect("a.jsp");
+					 }
+
+			
+					
+				    
+    클라이언트에 저장:쿠키
+                 Cookie 이용
+                 저장가능한 데이터는 문자열만 가능
+
 ##########################################################################
 ShopMiniMall 프로젝트
 
