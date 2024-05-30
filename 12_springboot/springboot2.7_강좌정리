@@ -130,7 +130,25 @@ Spring 어플리케이션 개발
 
         - spring boot 관련 jar: Spring Boot 
 
-    ===> 저장 경로는 C:\Users\ssginc76\.m2\repository 이다.
+    ===> 저장 경로는 C:\Users\ssginc76\.m2\repository 이다. (로컬 저장소 )
+
+       pom.xml ( Project Object Model )
+       - 버전, 필요한 jar 정보등 설정
+       - 계층구조로 구성됨. ( 부모에 해당하는 pom.xml 있음 )
+       - 필요로 하는 jar 파일은 <dependency> 태그로 설정하면 자동으로 다운로드 되고 build path까지 해줌.
+         http://mvnrepository.com
+
+
+    5) Maven의 주요 기능
+
+      가. 의존성 설정
+        - pom.xml 에 필요로 하는 jar 파일은 <dependency> 태그로 설정하면 자동으로 다운로드 되고 build path까지 해줌.
+	- http://mvnrepository.com 에서 <dependency> 정보를 얻을 수 있음.
+
+     나. 빌드시 사용되는 단계별 명령어
+
+      
+
 
 5. SpringBoot 프로젝트 생성 방법
  
