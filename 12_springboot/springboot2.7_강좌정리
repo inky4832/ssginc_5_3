@@ -1,0 +1,39 @@
+
+Spring 어플리케이션 개발
+
+1. Spring Framework 프로젝트
+  - https://spring.io/projects/spring-framework#learn 가서 Reference Doc과 API Doc 참조.
+  - 최신 버전인 6 는 JDK 17 부터 지원됨.
+  - STS 3 사용해야 됨.
+
+2. Spring Boot 프로젝트
+  - https://spring.io/projects/spring-boot#learn 가서 Reference Doc과 API Doc 참조.
+  - 최신 버전인 3 는 JDK 17 부터 지원됨.
+  - STS 3 및 STS 4 모두 가능
+
+3. 용어 정리
+
+  1) POJO 
+   - Plain Old Java Object
+   - 플랫폼에 독립적인 형태의 클래스를 의미한다.
+   예> CartListServlet는 의존적인 클래스( extends HttpServlet 때문에 Tomcat이 설치된 웹개발에서만 사용가능)
+      CartDTO는 독립적인 클래스.
+
+ 2) (Spring) Bean
+   - Spring 환경에서 사용되는 POJO 기반의 클래스 의미.
+
+ 3) IoC Container ( Inversion of Control Container: 제어의 역행)
+   https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#beans
+
+   - 개념:
+      IoC(Inversion of Control) 방법으로 Spring Bean을 관리(생성~소멸)하기 때문에 붙여진 이름
+
+   - 비슷한용어:
+     Spring Container
+     Spring Context
+
+   - 기능:
+     Spring Bean을 관리(생성~소멸) 및 의존성 설정.
+     (이전 개발방식은 
+
+
