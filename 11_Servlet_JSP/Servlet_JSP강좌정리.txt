@@ -1698,3 +1698,58 @@ ShopMiniMall 프로젝트
                           | 요청위임(forward/redirect)
 
 	 <----------    mypage.jsp
+
+
+9. 상품목록
+
+       /main?gCategory=top                     GoodsService
+웹브라우저 ------> MainServlet ("/main") -------> GoodsServiceImpl -------> GoodsDAO
+
+                          | 요청위임(forward/redirect)
+
+	 <----------    main.jsp
+
+
+10. 상품자세히보기
+
+       ?gCode=값                                           GoodsService
+웹브라우저 ----> GoodsRetrieveServlet ("/goodsRetrieve") --> GoodsServiceImpl -------> GoodsDAO
+
+                          | 요청위임(forward/redirect)
+
+	 <----------   goodsRetrieve.jsp
+
+
+11. 장바구니 저장
+                                              CartService   
+웹브라우저 ----> CartAddServlet ("/cartAdd") --> CartServiceImpl -------> CartDAO
+
+                          | 요청위임(forward/redirect)
+
+	 <----------     jsp
+
+
+
+12. 장바구니 목록
+                                                CartService   
+웹브라우저 ----> CartListServlet ("/cartList") --> CartServiceImpl -------> CartDAO
+					
+                          | 요청위임(forward/redirect)
+
+	 <----------     cartList.jsp
+
+
+  public class CartServiceImpl implments CartService{
+  
+         CartDAO cartDAO;
+
+        public CartServiceImpl(CartDAO cartDAO){
+	  this.cartDAO cartDAO'
+	}
+
+# CartListServlet
+   CartService service = new CartServiceImpl(new CartDAO());
+  
+
+==> CartServiceImpl 와 CartDAO 간에 의존성이 생겼고
+    개발자가 명시적으로 CartServiceImpl에 CartDAO를 생성해서  값을 전달해줌.
