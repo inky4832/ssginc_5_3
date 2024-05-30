@@ -1741,15 +1741,21 @@ ShopMiniMall 프로젝트
 
   public class CartServiceImpl implments CartService{
   
-         CartDAO cartDAO;
+         CartDAO cartDAO; //null
 
         public CartServiceImpl(CartDAO cartDAO){
-	  this.cartDAO cartDAO'
+	  this.cartDAO =cartDAO;
+	}
+
+	public void setCartDAO(CartDAO cartDAO){
+           this.cartDAO =cartDAO;
 	}
 
 # CartListServlet
    CartService service = new CartServiceImpl(new CartDAO());
   
+  CartService service = new CartServiceImpl();
+  service.setCartDAO(new CartDAO());
 
 ==> CartServiceImpl 와 CartDAO 간에 의존성이 생겼고
     개발자가 명시적으로 CartServiceImpl에 CartDAO를 생성해서  값을 전달해줌.
