@@ -190,6 +190,8 @@ Spring 어플리케이션 개발
   3) 어노테이션 <== Java Configuration 이라고 부름.
 
   4) boot ( xml 기반가능, 어노테이션 + 약간의 XML 가능, 어노테이션 가능(기본))
+    ==> src/main/resources 의
+       application.properties 이용해서 전반적인 환경설정을 설정함.
 
 #############################################################
 2일차
@@ -203,7 +205,7 @@ Spring 어플리케이션 개발
     이러한 문제를 해결하기 위해서 Spring Boot 라는 서브 프로젝트가 진행됨.
      Spring Boot 는 많은 설정들을 자동화해서 개발자가 실제 비즈니스 로직에 집중하도록 도와줌.
 
-2. Spring Boot 장점
+2. Spring Boot 장점(특징)
 
   - 설정 자동화
       pom.xml에 의존성 설정하면 자동으로 지정된 의존성에 맞는 환경을 설정해줌.
@@ -213,7 +215,7 @@ Spring 어플리케이션 개발
   
   - 웹어플리케이션 프로젝트인 경우에도 jar 실행가능.
 
-    * 어플리케이션 개발후 배포방법
+    * 어플리케이션 개발후 배포 방법
      
      1) 비웹 어플리케이션
          - 일반적인 Java SE 환경: jar
@@ -225,7 +227,23 @@ Spring 어플리케이션 개발
 	 - Spring Framework 환경: war
          - Spring Boot 환경: jar/war
 
+          jar 실행: java -jar  파일명.jar
 
+   - boot 프로젝트의 설정 정보는 src/main/resources 의
+     application.properties ( applicaion.yml 야물) 이용해서 전반적인 환경설정을 설정함.
+
+    # application.properties
+      server.error.whitelabel.enabled=false
+      server.port=8090
+ 
+    # application.yml
+      server:
+	  error:
+	    whitelabel:
+	      enabled: false
+	      
+	  port: 8090
+ 
 3. Spring Boot Starter
 https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build-systems.starters
 
