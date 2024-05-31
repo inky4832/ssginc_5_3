@@ -256,6 +256,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build
 
 ###############################################################################3
 4. 로깅처리
+https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.logging
 
   1) 개요
    - System.out.println 대신 특정 값(로그값)을 상황(레벨)에 맞게 콘솔(파일)에 출력.
@@ -282,6 +283,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build
        error
   
     ==> application.properties 에 로깅레벨을 설정.
+    ==> 동작방식은 지정된 레벨 포함한 하위 레벨까지 로깅처리됨. 
 
   4) boot에서 로깅처리를 담당하는 의존성이 있음
   
@@ -300,9 +302,25 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build
            logging.level.관심있는패키지명=로그레벨
 
       # 로깅레벨
-      logging.level.org.springframework=trace
-        
+      logging.level.org.springframework=debug
+      logging.level.com.exam=info
 
 
+   6) 사용자 지정 로그 출력
+
+      # application.propertis
+        logging.level.com.exam=trace
 
 
+      # java
+      import org.slf4j.Logger;
+      
+      Logger logger = LoggerFactory.getLogger(getClass());
+
+
+      //로그 출력
+	logger.trace("trace:{},{}", "trace1","trace2");
+	logger.debug("debug:{}", "debug");
+	logger.info("info:{}", "info");
+	logger.warn("warn:{}", "warn");
+	logger.error("error:{}", "error");
