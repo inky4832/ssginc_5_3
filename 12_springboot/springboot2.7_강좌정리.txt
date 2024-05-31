@@ -404,9 +404,9 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
 	          Test.java
                 @Component ( 后栏肺 积己凳)
 		  Hello.java
-                @Repository ( 后栏肺 积己凳)
+                @Repository ( 后栏肺 积己凳) <---- DAO 开且狼 后俊辑 荤侩
 		  World.java
-		@Service ( 后栏肺 积己凳)
+		@Service ( 后栏肺 积己凳)    <---- Service 开且狼 后俊辑 荤侩
 		  World2.java
 		@Controller ( 后栏肺 积己凳)   , @RestController ( 后栏肺 积己凳) 
 		  World2.java
