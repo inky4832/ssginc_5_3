@@ -280,13 +280,24 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#getting-sta
     @ComponentScan
       - 자동으로 빈생성하는 방법으로 기본적으로 패키지 단위로 설정해서 
         자동으로 생성하도록 가이드함.
-    
+     
+      - scan 방법 2가지
+
+        가. 패키지를 지정하지 않는 경우의 scan
+ 
+          - @SpringBootApplication 가진 Application.java의 패키지와 
+	    같거나 서브 패키지로 작성하면 자동으로 scan 됨.
+
+	나. 패키지를 지정한 경우의 scan
 
 
 
 ###############################################################################3
 5. 로깅처리
 https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.logging
+
+# 로깅레벨에 따른 색상설정시 never 동작안되는 상태 참조
+https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled-configured
 
   1) 개요
    - System.out.println 대신 특정 값(로그값)을 상황(레벨)에 맞게 콘솔(파일)에 출력.
@@ -360,5 +371,52 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.lo
 	logger.warn("warn:{}", "warn");
 	logger.error("error:{}", "error");
 
+####################################################
+6. 빈 생성 방법
 
-5. 빈 생성 방법
+  - 항상 Application.java의 패키지와 같거나 서브 패키지로
+    빈을 작성하자. (***********************************)
+
+  1) 명시적으로 생성
+     - @Configuration + @Bean 이용
+     ==> @Configuration 을 통해서 @Bean으로 지정한 빈을 생성했음.
+     ==> @Bean 은 메서드 레벨만 가능.
+         @Configuration 는 클래스 레벨만 가능.
+
+  2) 다른 패키지로 되어 있는 경우
+      - 명시적으로 패키지를 알려줘야 됨.
+      - @SpringBootApplication(scanBasePackages = {"com.exam2"})
+        public class Application {
+
+  3) 권장 패키지 구조
+  https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.structuring-your-code.locating-the-main-class
+    첫번째 작업: @SpringBootAppliction와 같은 패키지이거나 서브 패키지로 작성한다.
+    두번째 작업: 클래스에 어노테이션을 지정한다. 
+              @Configuration,@Component,@Repository,@Service,@Controller,@RestController
+
+     com.exam
+        
+	@SpringBootAppliction ( , , @ComponentScan)
+	Application.java
+
+              xxx
+	        @Configuration ( 빈으로 생성됨)
+	          Test.java
+                @Component ( 빈으로 생성됨)
+		  Hello.java
+                @Repository ( 빈으로 생성됨)
+		  World.java
+		@Service ( 빈으로 생성됨)
+		  World2.java
+		@Controller ( 빈으로 생성됨)   , @RestController ( 빈으로 생성됨) 
+		  World2.java
+    com.exam2
+              yyy
+	        @Component
+	        Main.java
+              
+
+
+
+
+ 
