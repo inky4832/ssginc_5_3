@@ -254,8 +254,38 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build
    http://mvnrepository.com 에서 starter 사용가능.
 
 
+4. XXXXApplication.java 
+https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#getting-started.first-application.code.spring-boot-application
+
+    @SpringBootApplication
+    public class Application{
+
+        public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
+    }
+
+  - 위 코드는 spring boot에서는 필수코드임.
+  - 시작점 역할 담당.
+  - @SpringBootApplication 어노테이션 필수로 지정.
+    다음 3가지 어노테이션을 포함한다.
+
+    @SpringBootConfiguration
+      - 개발자가 필요에 의해서 추가적인 Configuration 설정할 수 있도록 지원.
+        (추가적인 설정방법: 클래스 작성하고 @Configuration 지정 )
+      - 대표적으로 Spring Security 임.
+    @EnableAutoConfiguration
+      - pom.xml에 stater같은 의존성을 설정하면 거의 자동으로 필요한 설정을 해줌.
+        즉 자동 구성 메커니즘 활성화.
+    @ComponentScan
+      - 자동으로 빈생성하는 방법으로 기본적으로 패키지 단위로 설정해서 
+        자동으로 생성하도록 가이드함.
+    
+
+
+
 ###############################################################################3
-4. 로깅처리
+5. 로깅처리
 https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.logging
 
   1) 개요
@@ -299,12 +329,17 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.lo
     가. application.properties 에 로깅레벨을 설정.
    
       문법:
-           logging.level.관심있는패키지명=로그레벨
+        logging.level.관심있는패키지명=로그레벨
 
       # 로깅레벨
       logging.level.org.springframework=debug
       logging.level.com.exam=info
+ 
+      # 파일에 저장1- 경로지정만 함.
+      logging.file.path=c://log   ( spring.log 파일이 생성됨 )
 
+      # 파일에 저장2 ( 경로지정 + 파일명 같이 지정 )
+      logging.file.name=c:\\temp\\test2.log	
 
    6) 사용자 지정 로그 출력
 
@@ -324,3 +359,6 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.lo
 	logger.info("info:{}", "info");
 	logger.warn("warn:{}", "warn");
 	logger.error("error:{}", "error");
+
+
+5. 빈 생성 방법
