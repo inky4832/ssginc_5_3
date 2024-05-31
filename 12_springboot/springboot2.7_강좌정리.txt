@@ -254,12 +254,54 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#using.build
    http://mvnrepository.com 에서 starter 사용가능.
 
 
+###############################################################################3
+4. 로깅처리
+
+  1) 개요
+   - System.out.println 대신 특정 값(로그값)을 상황(레벨)에 맞게 콘솔(파일)에 출력.
+
+  2) 로그처리를 전문적으로 해주는 라이브러리
+
+     - log4J 라이브러리 
+     - logback 라이브러리 ( boot 기본 로깅담당 ) 
 
 
+     * 로깅처리 구조
 
+         SLF4J ( 인터페이스, 스펙 ) - log()
+          |
+          | 구현
+      log4J   logback
 
+  3) 로깅레벨
 
+       trace
+       debug
+       info ( 기본 )
+       warn
+       error
+  
+    ==> application.properties 에 로깅레벨을 설정.
 
+  4) boot에서 로깅처리를 담당하는 의존성이 있음
+  
+     spring-boot-starter 의 서브로
+         spring-boot-starter-logging 이 담당
+	          log4J
+		  logback
+		  slf4j
+
+ 
+  5) 적용
+    
+    가. application.properties 에 로깅레벨을 설정.
+   
+      문법:
+           logging.level.관심있는패키지명=로그레벨
+
+      # 로깅레벨
+      logging.level.org.springframework=trace
+        
 
 
 
