@@ -532,3 +532,69 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
     - request ( web 사용가능.  요청~응답 사이에서만 사용 가능 )
     - session ( web 사용가능.  기본적으로 web브라우저가 open 되어있는 동안 사용 가능 )
     - application ( web 사용가능.  기본적으로 Tomcat컨터네이가 start 되어있는 동안 사용 가능 )
+
+10. 초기화 및 cleanup 작업 처리
+https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#beans-factory-lifecycle
+
+  1) 개요
+   - 빈(bean)이 생성되고 의존성 주입(DI) 이후의 
+     필요한 초기화 작업 및 자원반납 작업 처리가 가능하도록 지원.
+
+  2) @PostConstruct 와  @PreDestroy  이용
+
+   예>
+      @PostConstruct
+      public void init(){
+          //초기화작업
+      }
+
+      @PreDestroy
+      public void clean(){
+          //cleanup작업
+      }
+
+11.  프로파일( Profile )
+https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.external-config.files.profile-specific
+
+   1) 개요
+    - 실제로 개발할 때는 개발환경, Q/A 환경, .. ,  production환경
+      다양한 환경을 개발자가 선택적으로 정해서 환경을 맞출 수 있는 개념.
+ 
+    예>
+       # 개발환경
+
+       Application.java -------> DeptServiceImple ------>DeptDAO ------> H2(데이터베이스,인메모리)
+   
+
+       # production환경
+
+       Application.java -------> EmpServiceImple ------>EmpDAO ------> MySQL(데이터베이스)
+
+    2) profile 에 따라서  properties 파일 선택 방법 
+    
+      여러 개의 application.properties 필요
+
+      문법: 
+          application-프로파일명.properties (yml)
+
+       - application.properties ( 기본 )
+           # 동작할 프로파일명 지정
+	   spring.profiles.active=prod  <== 지정한 프로파일명에 해당하는 
+	                                     application-프로파일.properties가 실제로 실행됨.
+
+         application-dev.properties  ( 개발용 )
+         application-prod.properties  ( product용 )	
+
+
+  3) profile 에 따라서  빈(bean) 파일 선택 방법
+
+     application.properties ( 기본 )
+           # 동작할 프로파일명 지정
+     spring.profiles.active=prod
+
+
+     @Profile("dev")
+     public class DevBean{}
+
+      @Profile("prod")
+     public class ProdBean{}
