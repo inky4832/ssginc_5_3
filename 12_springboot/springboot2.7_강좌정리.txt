@@ -452,7 +452,10 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
       }
   
       - 권장방법
+        권장이유는 하나의 블럭에서 모든 주입이 완료됨.
+	         또한 주입받는 시점이 생성시점이기 때문에 @Autowired 보다 훨씬 빠름.
       - 기본생성자는 반드시 없어야 됨.
+
 
     나. 어노테이션 이용
       - @Autowired 
@@ -503,3 +506,29 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
   }
 
   ctx.getBean("xxx", 클래스명.class);  // @Service("xxx") public class DeptServiceImpl
+
+
+
+9. 빈의 scope 
+
+  1) 개념
+    빈 생성후에 ctx.getBean() 를 여러번 했을 때 반환되는 빈의 스코프를 의미한다.
+    기본적으로 bean은 한번만 생성되고 getBean()을 여러번 했을 때 동일한 인스턴스를 반환함. ( 싱글톤 )
+
+    예>
+        DeptServiceImple s = ctx.getBean("xxx",DeptServiceImple.class);
+	DeptServiceImple s2 = ctx.getBean("xxx",DeptServiceImple.class);
+
+
+   2) scope 값 종류
+
+     @Scope(value=상수값)
+     예>@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON) // 기본
+
+    - singleton ( 기본, 단 하나의 빈으로 서비스, thread-unsafe )
+    - prototype ( getBean 할 때 마다 매번 생성해서 서비스, thread-safe )
+
+    - request ( web 사용가능.  요청~응답 사이에서만 사용 가능 )
+    - session ( web 사용가능.  기본적으로 web브라우저가 open 되어있는 동안 사용 가능 )
+    - application ( web 사용가능.  기본적으로 Tomcat컨터네이가 start 되어있는 동안 사용 가능 )
