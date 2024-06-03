@@ -136,7 +136,7 @@ Spring 어플리케이션 개발
 
         - spring boot 관련 jar: Spring Boot 
 
-    ===> 저장 경로는 C:\Users\ssginc76\.m2\repository 이다. (로컬 저장소 )
+    ===> 저장 경로는 C:\Users\ssginc76\.m2\repository 이다. (로컬 저장소)
 
        pom.xml ( Project Object Model )
        - 버전, 필요한 jar 정보등 설정
@@ -274,9 +274,17 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#getting-sta
       - 개발자가 필요에 의해서 추가적인 Configuration 설정할 수 있도록 지원.
         (추가적인 설정방법: 클래스 작성하고 @Configuration 지정 )
       - 대표적으로 Spring Security 임.
+       예>
+          @Configuration
+	  public class MyConfiguration{
+               // 코드
+	  }
     @EnableAutoConfiguration
       - pom.xml에 stater같은 의존성을 설정하면 거의 자동으로 필요한 설정을 해줌.
         즉 자동 구성 메커니즘 활성화.
+      - 예> spring-boot-starter-web 지정하면 자동으로 tomcat 설치되고
+           404 발생시 자동으로 Whitelable ~ 페이지를 제공하는 등..
+
     @ComponentScan
       - 자동으로 빈생성하는 방법으로 기본적으로 패키지 단위로 설정해서 
         자동으로 생성하도록 가이드함.
@@ -286,11 +294,13 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#getting-sta
         가. 패키지를 지정하지 않는 경우의 scan
  
           - @SpringBootApplication 가진 Application.java의 패키지와 
-	    같거나 서브 패키지로 작성하면 자동으로 scan 됨.
+	    같거나 서브 패키지로 작성하면 자동으로 scan 됨. ( 권장 방법 )
 
 	나. 패키지를 지정한 경우의 scan
+	  - 명시적으로 생성할 빈의 패키지명을 알려줘야 된다. 
+	    예> @SpringBootApplication(scanBasePackages = {"com.exam2"})
 
-
+ 
 
 ###############################################################################3
 5. 로깅처리
@@ -305,8 +315,8 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
   2) 로그처리를 전문적으로 해주는 라이브러리
 
      - log4J 라이브러리 
-     - logback 라이브러리 ( boot 기본 로깅담당 ) 
-
+     - logback 라이브러리 ( boot 기본 로깅 담당 ) 
+     - ..
 
      * 로깅처리 구조
 
@@ -388,7 +398,7 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
       - @SpringBootApplication(scanBasePackages = {"com.exam2"})
         public class Application {
 
-  3) 권장 패키지 구조
+  3) 자동으로 생성 (권장 패키지 구조)
   https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.structuring-your-code.locating-the-main-class
 
     첫번째 작업: @SpringBootAppliction와 같은 패키지이거나 서브 패키지로 작성한다.
@@ -422,11 +432,74 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
 
 7. 의존성 설정
 
-  - 묵시적으로 설정 방법
+  - 구조
 
-   1) 생성자 이용
+      DeptService
+      @Service                        @Repository
+      DeptServiceImpl ---------------> DeptDAO
 
-   2) 어노테이션 이용
-     - @Autowired 
+      DeptDAO dao;
+      public DeptServiceImpl(DeptDAO dao){
+         this.dao = dao;
+      }
 
+  1) 묵시적으로 설정 방법
+
+    가. 생성자 이용 (권장방법)
+      DeptDAO dao;
+      public DeptServiceImpl(DeptDAO dao){
+         this.dao = dao;
+      }
+  
+      - 권장방법
+      - 기본생성자는 반드시 없어야 됨.
+
+    나. 어노테이션 이용
+      - @Autowired 
  
+      예> 
+        @Autowired
+	DeptDAO deptDAO;
+
+
+  2) 명시적 설정 방법
+    - skip
+
+
+  3) 주입 가능한 타입이 여러개 인 경우
+   - 기본적으로 에러가 발생됨.
+   - 해결:
+         @Primary
+	 또는
+	 @Qualifier("빈이름")
+
+      예>
+         @Repository("empDAO")
+	 @Primary
+         public class EmpDAO
+
+
+        // 생성자 주입 이용
+	public DeptServiceImpl(@Qualifier("deptDAO")   CommonDAO commonDAO) {}
+
+
+        // @Autowired 이용
+        @Autowired
+	@Qualifier("empDAO")
+	CommonDAO commonDAO;
+
+  
+    4) 생성자 주입과 @Autowired 혼합 가능
+
+
+
+
+8. 생성된 빈 접근하는 방법
+
+  ApplicationContext ctx;
+
+  public 생성자(ApplicationContext ctx){
+     this.ctx = ctx;
+  }
+
+  ctx.getBean("xxx", 클래스명.class);  // @Service("xxx") public class DeptServiceImpl
