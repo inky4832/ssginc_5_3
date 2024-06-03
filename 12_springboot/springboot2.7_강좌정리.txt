@@ -598,3 +598,90 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.ex
 
       @Profile("prod")
      public class ProdBean{}
+
+
+    OOP ( Object Oriented Programming: 객체 지향 프로그래밍 )
+12. AOP ( Aspect Oriented Programming: 관점 지향 프로그래밍 )
+
+   1) 개념
+    
+     브라우저 ----------------> A서블릿 -----> 서비스 -----> DAO ------> DB
+                             (핵심기능:필수)     (핵심기능)    (핵심기능)
+			       +             +          +
+			      부수기능:로깅)  부수기능:로깅)    부수기능:로깅)
+			      
+    브라우저 ----------------> B서블릿 -----> 서비스 -----> DAO ------> DB
+                             (핵심기능)     (핵심기능)    (핵심기능)
+			                    +          +
+			                   부수기능:로깅)    부수기능:로깅)
+
+
+    - 각 layer가 달라도 공통적으로 사용되는 코드들이 있음(부수기능).
+      예> 로그처리
+
+    
+    - 최종적인 AOP 개념은 다음과 같다.
+      핵심기능과 부수기능(공통기능)을 분리하고 필요시 부수기능을 주입 받아서 구현하는 개발 방법론 의미.
+
+    
+    2) AOP 기술
+
+      가. AOP 원천기술
+         - AspectJ ( 1995년 )
+	 - 굉장히 무겁다.
+	   startup 시간이 많이 걸림.
+         - target class의 많은 이벤트가 발생시 AOP 적용될 수 있다.
+	   예> 변수값이 변경,
+	      생성자 호출,
+	      메서드 호출,
+	      ...
+
+      나. Spring AOP
+        - 원천기술인 AspectJ에서 일부분의 기술만 빌려와서 만듬.
+	- Spring 기반의 AOP 프레임워크.
+        - target class에서 메서드 호출(*****)되는 이벤트에서만 AOP가 적용됨.
+
+
+
+     3) 용어정리
+     
+      가. Aspect
+         - 여러 빈에 공통적으로 사용되는 부수기능을 구현한 빈을 의미.
+	 - @Aspect 어노테이션 사용
+
+      나. JoinPoint
+         - 핵심기능에 Aspect가 적용되는 시점을 의미.
+	   Spring AOP에서는 메서드 호출되는 시점만을 의미한다.
+
+	 - 이벤트로 적용됨.
+	 예> 핵심기능에서 발생 가능한 이벤트 종류?
+	   
+	    # 핵심기능 ( 타겟클래스: target class )
+	    @Service
+	    public class DeptServiceImpl{
+
+                 int num;  // 값 변경 이벤트
+
+		 public void setNum(int n){} // 메서드 호출 이벤트
+		 public void getNum(){}     // 메서드 호출 이벤트
+		 public DeptServiceImpl(){} // 생성자 호출 이벤트
+		 ..
+	    }
+
+
+            # 부가기능(로깅처리)
+	    @Aspect
+	    public class MyAspect{
+
+	        public void log_print(){
+                  s.o.p("로그출력");
+		}
+
+	    }
+
+       다. PointCut
+          - JoinPoint는 AOP가 주입되는 시점인 메서드 호출시점을 의미하고
+	    PointCut 는 메서드들 중에서 어떤 메서드를 호출했을 때 주입할 것인지를
+	    알려주는 표현식이다.
+
+       
