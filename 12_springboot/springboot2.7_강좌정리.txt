@@ -602,7 +602,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.ex
 
     OOP ( Object Oriented Programming: 객체 지향 프로그래밍 )
 12. AOP ( Aspect Oriented Programming: 관점 지향 프로그래밍 )
-
+https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#aop
    1) 개념
     
      브라우저 ----------------> A서블릿 -----> 서비스 -----> DAO ------> DB
@@ -663,7 +663,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.ex
                  int num;  // 값 변경 이벤트
 
 		 public void setNum(int n){} // 메서드 호출 이벤트
-		 public void getNum(){}     // 메서드 호출 이벤트
+		 public int getNum(){}     // 메서드 호출 이벤트
 		 public DeptServiceImpl(){} // 생성자 호출 이벤트
 		 ..
 	    }
@@ -680,8 +680,56 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.ex
 	    }
 
        다. PointCut
+       https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#aop-pointcuts-examples
           - JoinPoint는 AOP가 주입되는 시점인 메서드 호출시점을 의미하고
 	    PointCut 는 메서드들 중에서 어떤 메서드를 호출했을 때 주입할 것인지를
 	    알려주는 표현식이다.
 
-       
+          - execution("public int getNum()")
+	    execution("public int get*()")
+	    execution("public * get*()")
+	    execution("public * get*(**)")
+	 
+	라.  Advice
+           - JoinPoint는 AOP가 주입되는 시점인 메서드 호출시점을 의미하고
+	      PointCut 는 메서드들 중에서 어떤 메서드를 호출했을 때 주입할 것인지를
+	      알려주는 표현식이고
+	      Advice 호출된 메서드 전/후/성공/에러/(전,후,성공,에러)/ 시점을 의미.
+
+	      전: @Before
+	      후: @After 
+             성공: @AfterReturning
+	     실패: @AfterThrowing
+             (전,후,성공,에러): @Around  
+
+	   예>
+
+	       # 사용
+
+	       DeptServiceImpl service = ctx.getBean();
+
+	       //전
+               int n = service.getNum();
+               //후
+
+    마. weaving
+      - target object 와 aspect 연결의미.
+
+
+  4) 구현
+
+    가. 의존성 설정
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-aop</artifactId>
+	</dependency>
+	
+	==> aspectjweaver-1.9.7.jar 다운로드됨.
+
+    나. Aspect 작성
+      - 부가기능을 구현한 빈
+      - @Aspect 어노테이션 지정
+
+
+
+
