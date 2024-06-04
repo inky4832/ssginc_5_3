@@ -793,3 +793,84 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 
 
       나. Aspect에서 빈의 메서드 호출래서 pointcut 적용
+
+##############################################################
+
+13. Spring 기반의 DB 연동
+
+  1) JDBC vs Spring JDBC
+     - sql 이용
+     - JDBC보다 자바코드가 훨씬 적음.
+
+  2) Spring JDBC + h2 연동
+
+     가. 의존성 설정
+                <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+
+     나. h2 관리자 콘솔 설정 
+       - 웹페이지로 제공
+       - 의존성 설정
+           	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+       - h2 관리자 콘솔 활성화
+         # application.properties
+	   spring.h2.console.enabled=true
+
+       -  Application.java 실행 
+        다음과 같이 console에 h2 관리자 정보가 출력됨.
+	H2 console available at '/h2-console'. 
+	Database available at 'jdbc:h2:mem:619f31a9-e3f7-4ccc-92ec-b6a360f8c1ab'
+
+H2 console available at '/h2-console'. 
+Database available at         'jdbc:h2:mem:aeed695e-ecd0-4049-be58-b89a1902d11c'
+
+        웹 브라우저에 요청
+	http://localhost:8080/h2-console
+
+	요청 URL은 실행시마다 매번 랜덤하게 바뀜.
+	따라서 URL 고정하자. ( testdb )
+        # application.properties
+         spring.datasource.url=jdbc:h2:mem:testdb
+
+     다. 매 실행마다 자동으로 파일 인식해서 테이블 생성 + 데이터 저장하는 작업 처리 
+https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-initialization.using-basic-sql-scripts	
+
+      # src/main/resources 
+       schema.sql : create table 문 
+       data.sql   : insert 문
+
+
+       # schema.sql
+         create table todo(
+	 id int primary key,
+	 name varchar(255) not null,
+	 author varchar(255) not null);
+
+       # data.sql
+        insert into todo (id,name,author) values(1, 'boot공부','홍길동');
+	insert into todo (id,name,author) values(2, 'react공부','홍길동');
+	insert into todo (id,name,author) values(3, 'CI/CD공부','홍길동');
+
+
+     라. boot와 연동
+
+                              TodoService
+       Application.java <-->  TodoServiceImple <-->  TodoDAO <----> h2
+                                                     TodoDTO(Todo)
+        
+
+  3) Spring JDBC + mysql 연동
+
+  4) mybatis + mysql 연동 (*)
