@@ -800,8 +800,8 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 
   1) JDBC vs Spring JDBC
      - sql 이용
-     - JDBC보다 자바코드가 훨씬 적음.
-
+     - JDBC보다 자바코드가 훨씬 적음. ( 예외처리 불필요. 이유는 모두 RuntimeException 계열임 )
+  
   2) Spring JDBC + h2 연동
 
      가. 의존성 설정
@@ -865,11 +865,17 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 
      라. boot와 연동
-
-                              TodoService
-       Application.java <-->  TodoServiceImple <-->  TodoDAO <----> h2
-                                                     TodoDTO(Todo)
+ 
+        - 전체적인 아키텍쳐
+                              TodoH2Service
+       Application.java <-->  TodoH2ServiceImple <-->  TodoH2Repository <----> h2
+                                                       TodoDTO(Todo)
         
+        - sql문 + JdbcTemplate 빈 이용해서 연동
+	  DML(insert/delete/update): update() 메서드
+	  단일레코드조회:                queryForObject(sql, RowMapper인터페이스, 파라미터값)
+	  다중레코드조회:                query(sql, RowMapper인터페이스 [, 파라미터값])
+
 
   3) Spring JDBC + mysql 연동
 
