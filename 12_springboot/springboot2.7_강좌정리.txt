@@ -778,3 +778,18 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
 
 			return retVal;
                }
+
+    5) AOP 패턴
+
+      가. Pointcut 정의한 빈 작성
+         public class CommonPointcutConfig {
+
+		@Pointcut("execution(public * say*(..))")
+		public void businessService() {}
+		
+		@Pointcut("execution(public * aa*(..))")
+		public void businessService2() {}
+	}
+
+
+      나. Aspect에서 빈의 메서드 호출래서 pointcut 적용
