@@ -447,8 +447,11 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
 
     가. 생성자 이용 (권장방법)
       DeptDAO dao;
-      public DeptServiceImpl(DeptDAO dao){
+      EmpDAO dao2;
+
+      public DeptServiceImpl(DeptDAO dao, EmpDAO dao2){
          this.dao = dao;
+	 this.dao2 = dao2;
       }
   
       - 권장방법
@@ -464,6 +467,8 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
         @Autowired
 	DeptDAO deptDAO;
 
+	@Autowired
+        EmpDAO dao2; 
 
   2) 명시적 설정 방법
     - skip
@@ -505,6 +510,10 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
      this.ctx = ctx;
   }
 
+  또는
+ @Autowired
+ ApplicationContext ctx;
+
   ctx.getBean("xxx", 클래스명.class);  // @Service("xxx") public class DeptServiceImpl
 
 
@@ -523,8 +532,10 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
    2) scope 값 종류
 
      @Scope(value=상수값)
-     예>@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+     예> @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+        @Scope("singleton") 
         @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON) // 기본
+        @Scope("prototype") 
 
     - singleton ( 기본, 단 하나의 빈으로 서비스, thread-unsafe )
     - prototype ( getBean 할 때 마다 매번 생성해서 서비스, thread-safe )
@@ -731,5 +742,39 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
       - @Aspect 어노테이션 지정
 
 
+    다. Aspect 내에서 advice와 pointcut 을 설정
+
+      - @Before(pointcut설정)
+         - target object의 필수기능인 메서드가 호출하기전에 위빙
+         예> @Before("execution(public * say*(..))")
+
+      - @After(pointcut설정)
+         - target object의 필수기능인 메서드가 호출하기후에 위빙
+         예> @After("execution(public * say*(..))")
 
 
+       - @AfterReturning(pointcut=pointcut설정, returning=리턴값저장변수설정)
+        https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#aop-advice-after-returning
+
+          - target object의 필수기능인 메서드가 리턴한 값을 얻을 수 있다.
+          예> 
+	  @AfterReturning(pointcut="execution(public * say*(..))", returning = "xxx")
+	public void afterLogging(JoinPoint join, Object xxx) {
+
+   
+        - @AfterThrowing(pointcut=pointcut설정, throwing=발생된예외저장변수설정)
+	    - target object의 필수기능인 메서드가 예외발생 되었을 때
+	    예>
+	    @AfterThrowing(pointcut="execution(public * say*(..))", throwing = "ex")
+	    public void afterThrowingLogging(JoinPoint join, Exception ex) {
+
+      - @Aroud(pointcut설정)
+        
+	   - @Before + @After + @AfterReturning + @AfterReturning 모두 포함하는 기능
+           예>
+	       public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
+      
+			Object retVal = pjp.proceed();
+
+			return retVal;
+               }
