@@ -913,7 +913,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
         #application.properties
 	spring.sql.init.mode=always|never
 
-  4) mybatis + mysql 연동 (*)
+  4) mybatis + mysql 연동1 - @Repository 클래스 + TodoMapper.xml 연동
 
       가. 의존성 설정
 
@@ -1002,3 +1002,16 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 	   메서드 레벨:  지정된 메서드에서만 트랜잭션 으로 처리됨.
 
+ ################################################################
+
+    6) mybatis + mysql 연동2 - @Mapper 인터페이스( TodoMapper.java ) + TodoMapper.xml 연동
+
+      가. 기존 repository 삭제
+      나. com.exam.config.TodoMapper.xml 과 동일하 위치에
+                          TodoMapper.java 인터페이스 작성.
+
+      다. TodoMapper.xml 의 namespace 값과 TodoMapper 인터페이스 경로와 반드시 일치해야 된다.
+          <mapper namespace="com.exam.config.TodoMapper">
+
+      라. TodoMapper.java 인터페이스에 @Mapper 어노테이션 지정.
+      마. TodoMapper.java 인터페이스의 메서드명과 TodoMapper.xml의 id와 반드시 일치해야 된다.
