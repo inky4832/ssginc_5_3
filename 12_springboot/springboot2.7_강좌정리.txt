@@ -1004,7 +1004,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
  ################################################################
 
-    6) mybatis + mysql 연동2 - @Mapper 인터페이스( TodoMapper.java ) + TodoMapper.xml 연동
+    6) mybatis + mysql 연동2 (***) - @Mapper 인터페이스( TodoMapper.java ) + TodoMapper.xml 연동
 
       가. 기존 repository 삭제
       나. com.exam.config.TodoMapper.xml 과 동일하 위치에
@@ -1015,3 +1015,67 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
       라. TodoMapper.java 인터페이스에 @Mapper 어노테이션 지정.
       마. TodoMapper.java 인터페이스의 메서드명과 TodoMapper.xml의 id와 반드시 일치해야 된다.
+
+/////////////////////////////////////////////////////////////////////////////
+14. Spring MVC
+
+ 1) MVC 아키텍쳐
+
+  가. 서블릿/JSP MVC 아키텍쳐
+
+
+    웹 브라우저 -------> 서블릿(개발자가 구현) ---------> Service -------> DAO ------> DB
+                      ListServlet (/list)
+		      AddServlet (/add)
+                           |
+			   | <== 요청위임(redirect/foward)
+			 jsp 
+		           
+
+   ListServlet 까지 올려면 요청 URL?
+   http://서버IP:port/context명/서블릿매핑
+   http://localhost:8090/context명/list
+   http://localhost:8090/context명/add
+
+   ListServlet 했던 주요한 작업들 ?
+     - 요청처리
+        예> request.getParameter("name");
+	   ...
+     - 응답처리
+        예> 직접 응답 또는 jsp 위임작업
+
+   * 요청 위임
+     - redirect 방식
+
+     - foward 방식
+ 
+#######################################################################
+  나. Spring MVC 아키텍쳐
+
+                                    
+    웹 브라우저 ----> 서블릿(spring 제공) ---> Controller ---->Service ----> Repository ----> DB
+                   DispatcherServlet(/)      /list 역할
+
+		   	                     /add 역할
+                                    <---
+				    jsp + jsp에서보여줄데이터 ( 응답처리 )
+			  |
+			  | <== 요청위임(redirect/forward)
+			jsp 
+
+   DispatcherServlet 까지 올려면 요청 URL?
+   http://서버IP:port/context명/서블릿매핑
+   http://localhost:8090/context명/
+      
+   ====> 404이기 때문에 White Label page가 보임.
+
+    Controller 까지 올려면 요청 URL?
+   http://서버IP:port/context명/서블릿매핑/요청맵핑값
+   http://localhost:8090/context명/list
+   http://localhost:8090/context명/add
+
+   DispatcherServlet 에서는 
+   이전 ListServlet에서 했던 요청처리 및 응답처리를
+   직접 구현할 수 없다.
+   따라서 다른 클래스(Controller)를 이용해서 이전 서블릿에서 
+   했던 작업들을 구현한다.
