@@ -991,3 +991,14 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 	mybatis.type-aliases-package=com.exam.dto
 	# mapper 등록
 	mybatis.mapper-locations=com/exam/config/*Mapper.xml
+
+
+    5) Spring framework 및 Spring boot 트랜잭션 처리
+
+       - Service 빈에서 @Transactional 어노테이션으로 트랜잭션 처리한다.
+       - @Transactional 
+
+           클래스 레벨:  클래스내의 모든 메서드가 트랜잭션 으로 처리됨.
+
+	   메서드 레벨:  지정된 메서드에서만 트랜잭션 으로 처리됨.
+
