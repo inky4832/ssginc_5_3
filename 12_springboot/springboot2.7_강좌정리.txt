@@ -801,7 +801,14 @@ https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-ref
   1) JDBC vs Spring JDBC
      - sql 이용
      - JDBC보다 자바코드가 훨씬 적음. ( 예외처리 불필요. 이유는 모두 RuntimeException 계열임 )
-  
+      
+         try{
+
+	 }catch(SQLException e){
+           throw new RuntimeExceptino("");
+	 }
+     - JdbcTemplate 빈을 이용해서 DB 처리.
+
   2) Spring JDBC + h2 연동
 
      가. 의존성 설정
@@ -868,6 +875,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
  
         - 전체적인 아키텍쳐
                               TodoH2Service
+			      @Service                 @Repository
        Application.java <-->  TodoH2ServiceImple <-->  TodoH2Repository <----> h2
                                                        TodoDTO(Todo)
         
@@ -878,5 +886,31 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 
   3) Spring JDBC + mysql 연동
+
+     가. 의존성 설정
+                <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.33</version>
+		</dependency>
+
+      나. DB 연동위한 4가지 정보 설정
+        #application.properties
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+	spring.datasource.username=root
+	spring.datasource.password=1234
+
+
+      다. schema.sql 과 data.sql 활성화
+      https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-initialization.using-basic-sql-scripts
+
+        #application.properties
+	spring.sql.init.mode=always|never
 
   4) mybatis + mysql 연동 (*)
