@@ -914,3 +914,80 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 	spring.sql.init.mode=always|never
 
   4) mybatis + mysql 연동 (*)
+
+      가. 의존성 설정
+
+		<!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+		<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+		    <artifactId>mybatis-spring-boot-starter</artifactId>
+		    <version>3.0.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.33</version>
+		</dependency>
+
+
+        나. DB 연동위한 4가지 정보 설정
+        #application.properties
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+	spring.datasource.username=root
+	spring.datasource.password=1234
+
+
+	다. TodoDTO.java
+
+	라. TodoMyBatisMySQLRepository.java
+
+	   a. 이전 버전
+
+	    Service 클래스                    DAO 클래스
+            SqlSession 얻기  <--------------->  SqlSession 사용
+	                     SqlSession 전달
+	    트랜잭션 처리(***)
+	    close()
+
+	  ==> Service클래스에서 SqlSession을 얻은 이유는 트랜잭션(transaction) 처리 때문이다. (*******)
+              트랜잭션(transaction) 처리는 session.commit()/session.rollback() 으로 처리함.
+	   
+	   b. Spring 
+            ==> 이전 버전의 SqlSession 역할하는 빈이 제공됨. ( SqlSessionTemplate )
+
+
+             Service 클래스                    DAO 클래스
+
+	                                      SqlSessionTemplate 얻기
+
+	    @Transactional 
+	    public void tx(){
+		
+		insert();
+		delete();
+
+	    }
+
+	  @Transactional 동작방식
+	   - insert()와 delete() 모두 성공하면 자동으로 commit 해줌.
+	   - insert()와 delete() 작업중 하나라도 RuntimeException 발생되면 자동으로 모두 rollback 해줌.
+
+
+      마. TodoMyBatisMySQLService.java
+          TodoMyBatisMySQLServiceImpl.java
+        
+
+
+      바.  src/main/resources 
+                             com.exam.config
+			                     TodoMapper.xml
+
+      사. 별칭과 mapper 등록
+
+        # application.properties
+	# 별칭
+	mybatis.type-aliases-package=com.exam.dto
+	# mapper 등록
+	mybatis.mapper-locations=com/exam/config/*Mapper.xml
