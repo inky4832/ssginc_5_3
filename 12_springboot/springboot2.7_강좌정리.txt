@@ -1055,7 +1055,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
                                     
     웹 브라우저 ----> 서블릿(spring 제공) ---> Controller ---->Service ----> Repository ----> DB
                    DispatcherServlet(/)      /list 역할
-
+                  Mapping servlets: dispatcherServlet urls=[/]
 		   	                     /add 역할
                                     <---
 				    jsp + jsp에서보여줄데이터 ( 응답처리 )
@@ -1070,7 +1070,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
    ====> 404이기 때문에 White Label page가 보임.
 
     Controller 까지 올려면 요청 URL?
-   http://서버IP:port/context명/서블릿매핑/요청맵핑값
+   http://서버IP:port/context명/서블릿매핑/요청맵핑값  (******************)
    http://localhost:8090/context명/list
    http://localhost:8090/context명/add
 
@@ -1079,3 +1079,99 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
    직접 구현할 수 없다.
    따라서 다른 클래스(Controller)를 이용해서 이전 서블릿에서 
    했던 작업들을 구현한다.
+
+ 
+ 2) Spring MVC 실습
+
+  가. 의존성 설정
+     
+      <dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-devtools</artifactId>
+	</dependency>
+
+
+  나. port 번호 및 context 명 변경
+
+     # application.properties
+       # tomcat port 번호 변경
+	server.port=8090
+
+	# context 명 변경
+	server.servlet.context-path=/app
+
+   요청은 http://localhost:8090/app/ 이고 whitelabel error page 보임.
+    
+        /app : context명
+	/    : 서블릿맵핑명
+
+
+   다. Controller 작성
+    
+      - 이전 서블릿/jsp 버전의 서블릿 역할 담당. ( 요청처리 및 응답처리 )
+      - POJO 기반
+      - 빈으로 자동 생성될 수 있도록 권장 패키지 구조를 준수 + @Controller 로 지정.
+      - 요청 url과 일치하는 요청맵핑값을 설정. 
+        반드시 유일한 값으로 지정 필수.
+
+       예>  http://localhost:8090/app/list  <== list 역할의 메서드 실행
+           http://localhost:8090/app/add    <== add 역할의 메서드 실행
+
+
+       문법:
+            @RequestMapping("/list")
+	    public String list([변수,...]){
+
+		return "jsp정보";
+	    }
+            @RequestMapping("/add")
+	    public String add([변수,...]){
+
+		return "jsp정보";
+	    }
+
+
+   라. jsp 저장
+     - jsp 및 css/js/image 등을 저장하기 위해서는
+       기본적인 웹 어플리케이션 디렉터리 구조가 있음.
+                 webapp (*****)
+		    META-INF
+		      MANIFEST.MF
+		    WEB-INF
+		       lib
+		       web.xml
+		    
+		    hello.html (정적)
+		    test.css
+		    test.js
+		    test.png
+		    world.jsp (동적)
+       그런데 spring boot에서는 기본적으로 웹 어플리케이션 디렉터리 구조를 제공 안함.
+       이유는 spring boot는 jsp 권장 안함 ( 대신 thymeleaf (타임리프) 권장 )
+ 
+     - spring boot의 웹 디렉토리 구조는 다음과 같다.
+
+       src/main/resources 
+              META-INF
+	          resources
+		      WEB-INF
+		          views (폴더)
+			      hello.jsp  <== WEB-INF에 저장한 이유는 웹브라우저에서 직접 접근 불가.
+			                 Controller가 알려준 jsp가진 DispatcherServlet만 접근가능.
+
+     - jsp 의존성 설정
+        # JSP 의존성 설정
+	<dependency>
+		<groupId>org.apache.tomcat.embed</groupId>
+		<artifactId>tomcat-embed-jasper</artifactId>
+		<scope>provided</scope>
+	</dependency> 
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>jstl</artifactId>
+	</dependency>
