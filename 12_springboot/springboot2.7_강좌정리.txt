@@ -1292,3 +1292,23 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
      @RequestMapping(value="/login", method==RequestMethod.POST) <== 로직 요청, POST 방식이용이 일반적
      public String login(){}
+
+
+    * Spring Framework 4.3 이후에 어노테이션이 추가됨.
+
+     @RequestMapping(value="/login", method=RequestMethod.GET) 해당되는
+
+  ==>@GetMapping("/login")
+
+     @RequestMapping(value="/login", method==RequestMethod.POST) 해당되는
+
+  ==>@PostMapping("/login")
+
+
+  * PRG(Post-Redirect-Get) 패턴을 적용해서 최종적인 작업은 post가 아닌 get로 끝나게 처리해야 된다.
+ ######################################################################################
+
+4) 요청 파라미터 얻기
+
+ - 이전 서블릿/jsp의 request.getParameter("name") 역할.
+
