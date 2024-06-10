@@ -1394,3 +1394,35 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 		logger.info("logger:MemberDTO:{}", dto);
 
 ###################################################################
+5) 요청헤더값 얻기
+   ==> 헤더의 name값은 기본적으로 대소문자 구별 안함.
+
+   # 모든 요청헤더값 얻기
+     //요청헤더값 전부 얻기
+	@GetMapping("/header")
+	public String header(HttpServletRequest request) {
+	  Enumeration<String> names = request.getHeaderNames();
+		
+	    while(names.hasMoreElements()) {
+	    	String name = names.nextElement();
+	    	String value = request.getHeader(name);
+	    	logger.info("logger:header name:{}, header value:{}", name, value);
+	    }
+		return "hello";
+	}
+
+   # 특정 헤더값 얻기
+     // 특정 헤더값 얻기 ( 대소문자 구별안함. Accept 와 accept는 동일한 name으로 처리됨 )
+	@GetMapping("/header2")
+	public String header2(@RequestHeader("user-agent") String x,
+			      @RequestHeader("Accept-language") String x2,
+			      @RequestHeader("Accept") String x3
+			               ) {
+		logger.info("logger:user-agent:{}, accept-language:{}, accept:{}", x, x2, x3);
+	 
+		return "hello";
+	}
+
+
+6) 쿠키값 얻기
+
