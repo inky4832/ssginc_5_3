@@ -1229,6 +1229,66 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 ########################################################################
 
-3) 요청맵핑값의 패턴
+3) 요청맵핑값의 패턴1
 
   @RequestMapping("요청맵핑값")
+
+ 예>
+  @RequestMapping("/list")
+  @RequestMapping(value = {"/list2","/listAll"})
+  @RequestMapping("/update*")
+  @RequestMapping("/delete/*")
+  @RequestMapping("/add/**")
+
+  @RequestMapping("/find/**/board") <== 패턴 에러
+   해결: spring.mvc.pathmatch.matching-strategy=ant-path-matcher
+  https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/web.html#web.servlet.spring-mvc.content-negotiation
+
+
+3) 요청맵핑값의 패턴2
+
+   @RequestMapping("요청맵핑값") 의 클래스 레벨 사용가능
+
+   # 현재 
+    ==> 회원정보보기/ 회원생성하기 / 회원수정하기/ 회원삭제하기
+
+    @RequestMapping("/member/list")
+    @RequestMapping("/member/add")
+    @RequestMapping("/member/update")
+    @RequestMapping("/member/delete")
+
+
+   # 적용
+   @RequestMapping("/member")
+   public class MainController2{
+
+         @RequestMapping("/list")
+	 public String list(){}
+   }
+
+
+ 3) 요청맵핑값의 패턴3
+
+   - GET|POST 방식 명시 가능.
+
+   예> 로그인(회원가입) 작업은 반드시 2번 요청해야 된다.
+     이유는 첫번째 요청은 화면요청이고 두번째 실제 로직 요청이다.
+
+    # 현재
+
+     @RequestMapping("/loginForm") <== 화면요청, GET 방식이용이 일반적
+     public String loginForm(){}
+
+     @RequestMapping("/login") <== 로직 요청, POST 방식이용이 일반적
+     public String login(){}
+
+
+   # 적용
+     ==> 요청맵핑값은 /login으로 동일하지만 method 방식이 달라서 요청에 대한 식별이 가능하다.
+
+     @RequestMapping(value="/login", method=RequestMethod.GET) <== 화면요청, GET 방식이용이 일반적
+     public String loginForm(){}
+
+
+     @RequestMapping(value="/login", method==RequestMethod.POST) <== 로직 요청, POST 방식이용이 일반적
+     public String login(){}
