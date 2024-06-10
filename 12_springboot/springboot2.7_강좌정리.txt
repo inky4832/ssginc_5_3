@@ -1426,3 +1426,22 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 6) 쿠키값 얻기
 
+  # 전체 쿠키 얻기
+    // 쿠키 얻기1- 전체 쿠키 얻기
+		@GetMapping("/get-cookie1")
+		public String get_cookie1(HttpServletRequest request) {
+			
+			Cookie [] cookies = request.getCookies();
+			for (Cookie c : cookies) {
+				String name = c.getName();
+				String value = c.getValue();
+				logger.info("logger:쿠키 name:{}, 쿠키 value:{}", name, value);
+			}
+			return "hello";
+		}
+  # 특정 쿠키값 얻기
+        @GetMapping("/get-cookie")
+	public String get_cookie(@CookieValue("userid") String userid) {
+		logger.info("logger:쿠키 name:userid, 쿠키 value:{}", userid);
+		return "hello";
+	}
