@@ -1364,3 +1364,33 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 4) 요청 파라미터 얻기2- 멀티값( name 하나에 value 여러개 )
 
   -  이전 서블릿/jsp의 request.getParameterValues("name") 역할.
+
+  방법1: @RequestParam  + 배열로 처리
+      @PostMapping("/member1")
+	public String member1(@RequestParam("userid") String userid,
+			             @RequestParam("passwd") String passwd, 
+			             @RequestParam("email")  String [] email
+			            )
+
+  방법2: @RequestParam + List로 처리
+       @PostMapping("/member2")
+	public String member2(@RequestParam("userid") String userid,
+			             @RequestParam("passwd") String passwd, 
+			             @RequestParam("email") List<String> email
+			            ) {
+
+  방법3: DTO
+       
+        public class MemberDTO {
+
+	String userid;
+	String passwd;
+	
+	List<String> email; // String [] email 가능
+
+        @PostMapping("/member")
+	public String member(MemberDTO dto) {
+		
+		logger.info("logger:MemberDTO:{}", dto);
+
+###################################################################
