@@ -1445,3 +1445,75 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 		logger.info("logger:쿠키 name:userid, 쿠키 value:{}", userid);
 		return "hello";
 	}
+
+###################################################################
+
+
+  * 아키텍쳐
+
+            요청 처리 ( @RequestParam, @RequestHeader, @CookieValue )           
+  웹브라우저 ------------> Controller
+
+                            |
+			    |
+	 <------------   hello ( /WEB-INF/views/hello.jsp )
+
+
+7) Model 생성방법 ( jsp에서 보여줄 데이터 의미 )
+
+ - 이전 서블릿/jsp 는  scope에 setAttribute(key,value) 로 저장하고 jsp에서 보여줌.
+
+    scope 종류에 따라서 저장하고 
+     
+      request.setAttribute(key,value);
+      session.setAttribute(key,value);
+      application.setAttribute(key,value)
+  
+   나중에 jsp에 보여줌.
+     EL: ${key}
+
+  * Spring에서 JSTL 사용방법
+  1) 의존성 설정
+     	<dependency>
+		<groupId>org.apache.tomcat.embed</groupId>
+		<artifactId>tomcat-embed-jasper</artifactId>
+		<scope>provided</scope>
+	</dependency> 
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>jstl</artifactId>
+	</dependency>
+
+   2) jsp에서 taglib 등록
+   <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+  
+  방법1: HttpServletRequest 이용
+
+        @GetMapping("/m1")
+	public String m1(HttpServletRequest request) {
+		request.setAttribute("m1", "홍길동");
+
+ 방법2: Model 이용
+
+       @GetMapping("/m2")
+	public String m2(Model m) { // 자동으로 new Model()해서 주입됨.
+	
+		m.addAttribute("m1", "홍길동");
+		m.addAttribute("m1_dto", new LoginDTO("홍길동", "1234"));
+
+ 방법3: ModelMap 이용
+   
+    @GetMapping("/m3")
+	public String m3(ModelMap m) { // 자동으로 new ModelMap()해서 주입됨.
+	
+		m.addAttribute("m1", "홍길동");
+		m.addAttribute("m1_dto", new LoginDTO("홍길동", "1234"));
+
+ 방법4: Map<String,Object> 이용
+
+     @GetMapping("/m4")
+	public String m4(Map<String, Object> m) { // 자동으로 new ModelMap()해서 주입됨.
+	
+		m.put("m1", "홍길동");
+		m.put("m1_dto", new LoginDTO("홍길동", "1234"));
