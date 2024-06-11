@@ -1677,3 +1677,28 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
  ==> redirect 했음에도 불구하고 request scope에 저장된 Model을 사용할 수 있음. 단 한번만.
  ==> RedirectAttributes 모델 +  m.addFlashAttribute("model", "홍길동");
+
+
+12) 파일 업로드
+ 
+   (1) 개요
+   - 서블릿/JSP 및 Spring Framework 에서는 의존성 설정이 필요함.
+   - SpringBoot는 의존성 필요없음. ( -starter-web 에 자동으로 포함되어 있음 )
+
+   (2) 파일 업로드 화면
+
+      <form method="POST" enctype="multipart/form-data" action="fup.cgi">
+	  File to upload: <input type="file" name="upfile"><br/>
+	  Notes about the file: <input type="text" name="note"><br/>
+	  <br/>
+	  <input type="submit" value="Press"> to upload the file!
+	</form>
+ 
+   반드시 method와 enctype를 다음값으로 설정해야 된다.
+
+   - method="POST"
+   - enctype="multipart/form-data"
+
+   멀티 업로드 가능.
+   <input type="file" name="upfile1">
+   <input type="file" name="upfile2">
