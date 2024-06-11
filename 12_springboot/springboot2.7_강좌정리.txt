@@ -1702,3 +1702,100 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
    멀티 업로드 가능.
    <input type="file" name="upfile1">
    <input type="file" name="upfile2">
+
+     (3) UploadDTO 작성
+
+         public class UploadDTO {
+
+	String theText;
+ 	MultipartFile  theFile;
+
+
+    (4) Controller 업로드 작업
+
+         @PostMapping("/upload")
+	public String upload(UploadDTO dto) {
+		
+		String theText = dto.getTheText();
+		MultipartFile  theFile = dto.getTheFile();
+		
+		long size = theFile.getSize();
+		String name = theFile.getName();
+		String fileName = theFile.getOriginalFilename();
+		String contentType = theFile.getContentType();
+		
+		
+		logger.info("logger:theText:{}", theText);
+		logger.info("logger:size:{}", size);
+		logger.info("logger:name:{}", name);
+		logger.info("logger:fileName:{}", fileName);
+		logger.info("logger:contentType:{}", contentType);
+		
+		// 서버의 물리적인 디렉터리에 파일 저장 예> c:\\upload
+		
+		// 파일이 저장할 경로만 알려줌
+		File f = new File("c:\\upload", fileName);
+		
+		try {
+			theFile.transferTo(f);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return "uploadInfo";
+	}
+
+
+	 (5) Controller 다운로드 작업
+
+        // uploadInfo 작업
+	<h2>uploadInfo</h2>
+	내용:${uploadDTO.theText}<br>
+	파일명:${uploadDTO.theFile.originalFilename}<br>
+	파일명:<a href="down?fileName=${uploadDTO.theFile.originalFilename}">
+	     ${uploadDTO.theFile.originalFilename}</a><br>
+	</body>
+
+	 
+	//파일다운로드
+		@Autowired
+		ServletContext ctx;
+		
+		@GetMapping("/down")
+		public void fileDown(HttpServletRequest request, HttpServletResponse response)
+		throws Exception{
+
+		 String fileName = request.getParameter( "fileName" );
+		        File fNew = new File("c:\\upload", fileName);
+			String sFilePath = fNew.getPath();
+		//	String sFilePath = sDownloadPath + fileName;
+
+			byte b[] = new byte[4096];
+			FileInputStream in = new FileInputStream(sFilePath);
+
+			String sMimeType = ctx.getMimeType(sFilePath);
+	System.out.println("sMimeType>>>"+sMimeType );
+
+			if(sMimeType == null) sMimeType = "application/octet-stream";
+
+			response.setContentType(sMimeType);
+
+			String sEncoding = new String(fileName.getBytes("UTF-8"),"8859_1");
+
+			response.setHeader("Content-Disposition", "attachment; filename= " + sEncoding);
+			
+			ServletOutputStream out = response.getOutputStream();
+			int numRead;
+
+			while((numRead = in.read(b, 0, b.length)) != -1) {
+				out.write(b, 0, numRead);
+			}
+			out.flush(); 
+			out.close();
+			in.close();
+		}
+	
+	
+	
