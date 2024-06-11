@@ -1251,12 +1251,11 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
    # 현재 
     ==> 회원정보보기/ 회원생성하기 / 회원수정하기/ 회원삭제하기
-
+    @RequestMapping("/member")
     @RequestMapping("/member/list")
     @RequestMapping("/member/add")
     @RequestMapping("/member/update")
     @RequestMapping("/member/delete")
-
 
    # 적용
    @RequestMapping("/member")
@@ -1264,6 +1263,12 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
          @RequestMapping("/list")
 	 public String list(){}
+
+	 @RequestMapping("/add")
+	 public String add(){}
+
+	 @RequestMapping
+	 public String default(){}
    }
 
 
@@ -1272,7 +1277,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
    - GET|POST 방식 명시 가능.
 
    예> 로그인(회원가입) 작업은 반드시 2번 요청해야 된다.
-     이유는 첫번째 요청은 화면요청이고 두번째 실제 로직 요청이다.
+     이유는 첫번째 요청은 화면요청(GET방식)이고 두번째 실제 로직 요청(POST방식)이다.
 
     # 현재
 
@@ -1310,8 +1315,8 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 4) 요청 파라미터 얻기1- 단일값( name 하나에 value 하나 )
 
- - 이전 서블릿/jsp의 request.getParameter("name") 역할.
- - POST 요청시에도 한글처리가 지원됨. 
+ - 이전 서블릿/jsp의 request.getParameter("name") 역할 및 POST요청시 한글처리 명시적으로 구현.
+ - Spring MVC에서는 POST 요청시에도 한글처리가 자동으로 지원됨. 
 
  방법1:
 
@@ -1320,7 +1325,9 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 		String userid = request.getParameter("userid");
 		String passwd = request.getParameter("passwd");
 
- 방법2:
+       ==> 서블릿/jsp에서는 "userid"가 없으면 null 값을 반환했음.
+
+ 방법2(******):
       @PostMapping("/login")
 	public String login(@RequestParam("userid") String userid,
 			    @RequestParam("passwd") String passwd) {
@@ -1345,7 +1352,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 	public String login(@RequestParam String userid,
 			            @RequestParam("passwd") String pw) {
 		
- 방법5:  DTO에 직접 저장(단 name 값과 DTO의 변수명이 동일한 경우)
+ 방법5(*******):  DTO에 직접 저장(단 name 값과 DTO의 변수명이 동일한 경우)
 
         @PostMapping("/login")
 	public String login(LoginDTO dto) {
@@ -1367,19 +1374,19 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
   방법1: @RequestParam  + 배열로 처리
       @PostMapping("/member1")
-	public String member1(@RequestParam("userid") String userid,
+	public String member1(       @RequestParam("userid") String userid,
 			             @RequestParam("passwd") String passwd, 
 			             @RequestParam("email")  String [] email
 			            )
 
   방법2: @RequestParam + List로 처리
        @PostMapping("/member2")
-	public String member2(@RequestParam("userid") String userid,
+	public String member2(       @RequestParam("userid") String userid,
 			             @RequestParam("passwd") String passwd, 
 			             @RequestParam("email") List<String> email
 			            ) {
 
-  방법3: DTO
+  방법3(******): DTO
        
         public class MemberDTO {
 
@@ -1498,7 +1505,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
        @GetMapping("/m2")
 	public String m2(Model m) { // 자동으로 new Model()해서 주입됨.
-	
+		// 기본적으로 request scope에 저장됨.
 		m.addAttribute("m1", "홍길동");
 		m.addAttribute("m1_dto", new LoginDTO("홍길동", "1234"));
 
@@ -1506,7 +1513,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
    
     @GetMapping("/m3")
 	public String m3(ModelMap m) { // 자동으로 new ModelMap()해서 주입됨.
-	
+	        // 기본적으로 request scope에 저장됨.
 		m.addAttribute("m1", "홍길동");
 		m.addAttribute("m1_dto", new LoginDTO("홍길동", "1234"));
 
@@ -1514,6 +1521,77 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
      @GetMapping("/m4")
 	public String m4(Map<String, Object> m) { // 자동으로 new ModelMap()해서 주입됨.
-	
+	       // 기본적으로 request scope에 저장됨.
 		m.put("m1", "홍길동");
 		m.put("m1_dto", new LoginDTO("홍길동", "1234"));
+
+ 방법5: 자동으로 key 사용해서 저장
+       	@GetMapping("/m5")
+	public String m5(LoginDTO dto) {  
+		// LoginDTO 가 Model이 됨. 즉 내부적으로 request.setAttribute( loginDTO , dto );
+		// 자동으로 빈 이름(첫글자소문자)으로 key로 설정됨.
+		dto.setUserid("이순신");
+		dto.setPasswd("9876");
+		return "m5";
+	}
+
+ 방법6(*****): 명시적으로  key 사용해서 저장
+
+       @GetMapping("/m6")
+	public String m6(@ModelAttribute("dto_model") LoginDTO dto) {  
+		// LoginDTO 가 Model이 됨. 즉 내부적으로 request.setAttribute( 명시적 지정 , dto );
+		// key값 설정은 @ModelAttribute("key값") 사용.
+		dto.setUserid("이순신");
+		dto.setPasswd("9876");
+		return "m6";
+	}
+
+ 방법7:
+      @GetMapping("/m7")
+	public String m7(@ModelAttribute("list_model") ArrayList<LoginDTO> list) {  
+		// LoginDTO 가 Model이 됨. 즉 내부적으로 request.setAttribute( 명시적 지정 , dto );
+		// key값 설정은 @ModelAttribute("key값") 사용.
+		
+		list.add(new LoginDTO("홍길동", "1234"));
+		list.add(new LoginDTO("이순신", "9876"));
+		return "m7";
+	}
+
+ =====> 여기까지가 메서드의 파라미터로 지정해서 Model를 생성함.
+       그러면 리턴타입의 String은 View 정보였음( jsp 정보)
+
+ =====> 지금부터는 메서드의 리턴타입으로 Model를 생성함.
+       그러면 View 정보는 어떻게 얻을까?  요청맵핑값을 view 정보로 사용한다.
+
+ 방법 8: 자동으로 key 사용해서 저장
+     
+        @GetMapping("/m8") // /WEB-INF/views/m8.jsp 찾음
+	public LoginDTO m8() {   // 리턴타입인 LoginDTO가 Model임.
+		
+		return new LoginDTO("유관순", "1234");
+	}
+
+방법 9: 명시적으로  key 사용해서 저장
+
+       @GetMapping("/m9") // /WEB-INF/views/m9.jsp
+       @ModelAttribute("dto_model")
+	public  LoginDTO m9() {   // 리턴타입인 LoginDTO가 Model임.
+		
+		return new LoginDTO("유관순", "1234");
+	}
+       
+방법10: 
+       @GetMapping("/m10") // /WEB-INF/views/m10.jsp
+	@ModelAttribute("list_model")
+	public ArrayList<LoginDTO>  m10() {   // 리턴타입인 LoginDTO가 Model임.
+		
+		ArrayList<LoginDTO> list = new ArrayList<>();
+		list.add(new LoginDTO("홍길동", "1234"));
+		list.add(new LoginDTO("이순신", "9876"));
+		
+		return list;
+	}
+
+=== > 이전까지는 Model과 View 정보가 분리되서 설정했음.
+
+=== > 지금부터는 Model과 View 정보를 한번에 설정 가능.
