@@ -1675,4 +1675,5 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
 11) redirect-flashScope-forward
 
- ==> redirect 했음에도 불구하고 request scope에 저장된 Model을 사용할 수 있음. 단 한번
+ ==> redirect 했음에도 불구하고 request scope에 저장된 Model을 사용할 수 있음. 단 한번만.
+ ==> RedirectAttributes 모델 +  m.addFlashAttribute("model", "홍길동");
