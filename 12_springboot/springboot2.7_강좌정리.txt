@@ -1595,3 +1595,50 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 === > 이전까지는 Model과 View 정보가 분리되서 설정했음.
 
 === > 지금부터는 Model과 View 정보를 한번에 설정 가능.
+
+      ModelAndView 빈 이용.
+
+      @GetMapping("/m11") 
+	public ModelAndView  m11() {   
+		
+		ModelAndView mav = new ModelAndView();
+		
+		//뷰정보
+		mav.setViewName("m11");  // /WEB-INF/views/m11.jsp
+		
+		//모델정보
+		mav.addObject("m11", "홍길동");
+		mav.addObject("m11_dto", new LoginDTO("홍길동", "1234"));
+		
+		List<LoginDTO> list =
+				 Arrays.asList(new LoginDTO("홍길동1", "1234"),
+						       new LoginDTO("홍길동2", "9999"));
+		mav.addObject("m11_list", list);
+		
+		return mav;
+	}
+
+ ====> 이전까지는 전부 request scope에  Model을 저장했음.
+
+
+8) Model scope
+
+  (1) session scope
+
+     - @SessionAttribute(names={"key값","key값"})
+
+      Model을 저장할 때 위에서 설정한  key값을 사용하면
+      session scope에 Model이 저장된다.
+
+  (2) application scope
+
+      - @Autowired
+        ServletContext ctx;
+
+	ctx.setAttribute(key,value);
+   # JSP
+   ${requestScope.key}
+   ${sessionScope.key}
+   ${applicationScope.key}
+
+   ${key} <=== request에서 먼저찾고 없으면 session 찾고 또 없으면 application에서 찾음.
