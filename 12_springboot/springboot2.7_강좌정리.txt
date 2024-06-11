@@ -1650,4 +1650,16 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 
   Ajax(jQuery)        JSON
   웹브라우저 ---------------------------------> Controller ( 전달된 JSON을 DTO에 자동 저장 )
+                                                       @RequestBody
           <---------------------------------
+전달된 값/DTO	             값, DTO
+을 JSON 받을 수 있음.
+  (@ResponseBody)
+
+
+    *최종정리
+
+     웹브라우저          @RequestBody           서버
+         JSON   ------------------------->   자바 
+	        <-------------------------
+		      @ResponseBody
