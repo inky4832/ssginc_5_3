@@ -1663,3 +1663,16 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
          JSON   ------------------------->   자바 
 	        <-------------------------
 		      @ResponseBody
+
+
+10) redirect 와 forward
+
+   (1)문법:
+
+       return  "redirect:요청맵핑값";  // 이전 서블릿의 response.sendRedirect("") 동일
+
+       return  "forward:요청맵핑값";  //  이전 서블릿의 request.getRequestDispatcher("").forward(request, response) 동일.
+
+11) redirect-flashScope-forward
+
+ ==> redirect 했음에도 불구하고 request scope에 저장된 Model을 사용할 수 있음. 단 한번
