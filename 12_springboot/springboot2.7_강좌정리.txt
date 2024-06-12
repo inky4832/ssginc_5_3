@@ -1917,7 +1917,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.in
       - 세션을 이용해서 locale 정보를 저장및얻음
       - setLocale("ko|en|");
 
- - 구현
+ - 구현 1
    1) 리소스 번들 파일 작성 (resouece bundle 파일)
      - 문법:
            src/main/resources 폴더
@@ -1944,7 +1944,62 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.in
             false.  message.properties 적용.
 
 
+      4) SessionLocaleResolver 생성
+        @ Configuration
+	public class WebMvc {
 
+	// 기본인 AcceptHeaderLocaleResolver 인데
+	// 기본을 SessionLocaleResolver로 변경하는 작업이다.
+	@Bean
+	public SessionLocaleResolver localeResolver() {
+		SessionLocaleResolver locale =
+				new SessionLocaleResolver();
+		locale.setDefaultLocale(new Locale("ko"));
+		return locale;
+	}
+}
+ 
+      5) Controller 에서 개발자가 직접 locale 변경
+        @GetMapping("/bundle")
+	public String bundle( HttpServletRequest request,
+			              HttpServletResponse response,
+			          @RequestParam String lang) {
+		
+		//SessionLocaleResolver의 로케일을 변경.
+		locale.setLocale(request, response,
+				new Locale(lang));
+
+   - 구현 2
+     
+      - LocaleChangeInterceptor 이용해서 로케일 변경해줌.
+        따라서 Controller에서 명시적으로 setLocale(new Locale("값")) 할 필요가 없음.
+ 
+          @Configuration
+public class WebMvc implements WebMvcConfigurer{
+
+	// 기본인 AcceptHeaderLocaleResolver 인데
+	// 기본을 SessionLocaleResolver로 변경하는 작업이다.
+	@Bean
+	public SessionLocaleResolver localeResolver() {
+		SessionLocaleResolver locale =
+				new SessionLocaleResolver();
+		locale.setDefaultLocale(new Locale("ko"));
+		return locale;
+	}
+	//LocalChangeInterceptor 생성
+	@Bean
+	public LocaleChangeInterceptor changeInterceptor() {
+		LocaleChangeInterceptor xxx = new LocaleChangeInterceptor();
+		// ?lang=en|ko|jp
+		xxx.setParamName("lang");
+		return xxx;
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(changeInterceptor());
+	}
+}
 
 
 
