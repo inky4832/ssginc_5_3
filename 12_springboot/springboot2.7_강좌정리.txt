@@ -1845,15 +1845,61 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 			registry.addInterceptor(myHandlerInterceptor)
 				.addPathPatterns("/login","/logout");
 		}
+#####################################################################
+
+14) 예외처리
+
+  - Controller에서 예외발생시 예외처리하는 방법임.
+
+  (1) 기본
+  	@GetMapping("/errorPage")
+	public String errorPage() {
+		logger.info("logger:MainController:{}", "/errorPage 요청");	
+		throw new IllegalArgumentException("IllegalArgumentException 발생됨");
+	}
+
+   => SpringBoot는 자동으로  Whitelabel Error Page를 제공한다.
+     이것이 boot의 특징인 auto configuration 이다.
+
+     spring-boot-autoconfigure-2.7.18.jar 담당함.
+
+  (2) 발생된 예외를 auto configuration 처리하지 말고 커스터마이징하자.
+
+     가. 지역 예외 처리
+       -  예외가 발생된 특정 Controller 내에서 예외처리
+       - @ExceptionHandler
+         # Controller 안에서 
+        @ExceptionHandler(value = {NullPointerException.class,
+			                   IllegalArgumentException.class})
+	public String errorPage(Exception e, Model m) {
+		logger.info("logger:errorPage:{}", e.getMessage());
+		m.addAttribute("error_message",  e.getMessage());
+		return "errorPage";  // errorPage.jsp
+	}
 
 
-
+     나. 글로벌 예외처리
+       - 모든 Controller 예외처리
+       - @ControlAdvice 
+         # 새로운 빈에서
+          @ControllerAdvice
+       public class GlobalExceptionHandler {
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@ExceptionHandler(value = {ClassCastException.class,
+			                  ArithmeticException.class})
+	public String errorPage(Exception e, Model m) {
+		logger.info("logger:errorPage:{}", e.getMessage());
+		m.addAttribute("error_message",  e.getMessage());
+		return "errorPage";  // errorPage.jsp
+	  }
+        }
+      
 
 inky4832@daum.net ( github owner )
 inky4833@gmail.com ( 협력자 )
 	
 예외처리
-HandlerInterceptor
 I18N ( 국제화 )
 폼 유효성 체크
 MySQL+Mybatis
