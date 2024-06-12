@@ -403,7 +403,8 @@ https://stackoverflow.com/questions/48011632/where-is-spring-output-ansi-enabled
 
     첫번째 작업: @SpringBootAppliction와 같은 패키지이거나 서브 패키지로 작성한다.
     두번째 작업: 클래스에 어노테이션을 지정한다. 
-              @Configuration,@Component,@Repository,@Service,@Controller,@RestController
+              @Configuration,@Component,@Repository,@Service,@Controller,
+	      @RestController
 
      com.exam
         
@@ -613,6 +614,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#features.ex
 
     OOP ( Object Oriented Programming: 객체 지향 프로그래밍 )
 12. AOP ( Aspect Oriented Programming: 관점 지향 프로그래밍 )
+==> @Transational 이 AOP 기술로 만들어짐.
 https://docs.spring.io/spring-framework/docs/5.2.25.RELEASE/spring-framework-reference/core.html#aop
    1) 개념
     
@@ -1051,7 +1053,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
      - foward 방식
  
 #######################################################################
-  나. Spring MVC 아키텍쳐
+  나. Spring MVC 아키텍쳐 (*****************)
 
                                     
     웹 브라우저 ----> 서블릿(spring 제공) ---> Controller ---->Service ----> Repository ----> DB
@@ -1660,7 +1662,7 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
     *최종정리
 
      웹브라우저          @RequestBody           서버
-         JSON   ------------------------->   자바 
+         JSON   ------------------------->   자바(DTO, List) 
 	        <-------------------------
 		      @ResponseBody
 
@@ -1796,6 +1798,66 @@ https://docs.spring.io/spring-boot/docs/2.7.18/reference/htmlsingle/#howto.data-
 			out.close();
 			in.close();
 		}
+
+#####################################################################
+13) HandlerInterceptor (X)
+
+  - 기본적인 Spring MVC 아키텍쳐에서 3군데 위치에서 가로채기 가능
+    Controller 요청전,
+    Controller 요청후,
+    jsp 응답전
+
+  - Spring MVC 아키텍쳐
+
+  웹브라우저 ----필터--->DispatcherServlet ----(X)----> Controller --->Service-->Repository
+                                       <----(X)---              <--       <--
+
+                              |
+			      |
+			     jsp
+          <------(X)-------
+
+  - 구현방법
+   1) implments HandlerInterceptor
+   2) 필요한 3개의 메서드 재정의 가능 ( default 메서드 )
+      # Controller 호출전에 실행 ( 주요기능 예> 로그인 여부 확인작업등 )
+      public boolean preHandle(HttpServletRequest request, 
+			                 HttpServletResponse response, 
+			                 Object handler)
+      # Controller 호출후에 실행 ( 주요기능 예> View 변경 및 Model 추가/수정 )
+      public void postHandle(HttpServletRequest request, 
+			               HttpServletResponse response, 
+			               Object handler,
+			               ModelAndView mav) throws Exception
+       # JSP가 웹브라우저에 랜더링 된후 실행
+      public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception 
+   3) web.xml 역할의 @Configuration 으로 지정된 빈을 만들어서 HandlerInterceptor 등록.
+
+       @Configuration
+	public class WebConfig implements WebMvcConfigurer {
+
+		@Autowired
+		MyHandlerInterceptor myHandlerInterceptor;
+		
+		@Override
+		public void addInterceptors(InterceptorRegistry registry) {
+			registry.addInterceptor(myHandlerInterceptor)
+				.addPathPatterns("/login","/logout");
+		}
+
+
+
+
+inky4832@daum.net ( github owner )
+inky4833@gmail.com ( 협력자 )
 	
-	
-	
+예외처리
+HandlerInterceptor
+I18N ( 국제화 )
+폼 유효성 체크
+MySQL+Mybatis
+ShopMiniMall ( SpringSecurity 적용전 )
+
+SpringSecurity
+ShopMiniMall ( SpringSecurity 적용후 )
