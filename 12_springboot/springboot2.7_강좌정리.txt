@@ -2002,15 +2002,131 @@ public class WebMvc implements WebMvcConfigurer{
 }
 
 
+16) webjar
+ 
+  # 현재 사용했던 방식
+  - jquery 사용
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  - bootstrap 사용
+      CDN 방식 링크로 사용
+
+  ==> 버전이 변경 또는  네트워크 이슈로 사용이 힘들수 있음
+
+  # 적용 방식
+   - jquery 와 bootstrap 를 의존성 설정해서 사용하자.
+
+    webJar의 jQuery 경로
+    /META-INF/resources/webjars/jquery/3.7.1/jquery.min.js
+
+   최종적으로 사용 경로: <script src="webjars/jquery/3.7.1/jquery.min.js"></script>
+
+    webJar의 bootstrap 경로
+    /META-INF/resources/webjars/bootstrap/5.3.3/css/bootstrap.min.css
+    /META-INF/resources/webjars/bootstrap/5.3.3/js/bootstrap.min.js
+
+   최종적으로 사용 경로: <script src="webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+                    <link href="webjars/bootstrap/5.3.3/css/bootstrap.min.css" >
+
+      <!-- https://mvnrepository.com/artifact/org.webjars/jquery -->
+	<dependency>
+	    <groupId>org.webjars</groupId>
+	    <artifactId>jquery</artifactId>
+	    <version>3.7.1</version>
+	</dependency>
+        <!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
+	<dependency>
+	    <groupId>org.webjars</groupId>
+	    <artifactId>bootstrap</artifactId>
+	    <version>5.3.3</version>
+	</dependency>
+
+   # 실코드 적용
+   <head>
+	   <meta charset="UTF-8">
+	   <title>Insert title here</title>
+	<script src="webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+	<link rel="stylesheet"  href="webjars/bootstrap/5.3.3/css/bootstrap.min.css" >
+	<script src="webjars/jquery/3.7.1/jquery.min.js"></script>
+	   <script>
+	      $(document).ready(function(){
+		  alert("jquery 실행");
+	      });
+	   </script>
+    </head>
+    <body>
+ 
+17)폼 유효성 체크
+
+  (1) 개요
+    - 사용자 입력 폼의 데이터 유효성 검사 의미.
+     예> 필수사항, 날짜(미래날짜만 가능), 값의 길이 n개 이상,..
+
+  (2) 구현 방식
+
+     - html 속성 이용
+     - JS 이용
+    ======> html 및 JS 는 전부 클라이언트에서 처리하는 방법이다.
+            클라이언트에서 JS 비활성화 시키거나 보안 이슈 발생 가능성이 높음.
+
+     - Spring Boot 이용
+    ======> 서버에서 유효성 체크하는 방법이다.
+
+  (3) 적용
+
+     가. 의존성 설정
+          <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-validation</artifactId>
+	</dependency>
+
+
+     나. DTO 생성 ( Command Bean 이라고 함, form backing object: 양식보조객체 )
+      ==> 변수에 어노테이션으로 유효성 조건을 지정한다.
+          
+    // Command Bean, Form backing Object
+       public class MemberDTO {
+
+	@NotNull
+	String userid;
+	
+	@Size(min = 3, message = "3글자 이상입니다.")
+	String username;
+	
+	// 010-1234-4567
+	//@Pattern(regexp = "/^\\d{3}-\\d{3,4}-\\d{4}$/")
+	//String phone;
+	
+	@NotNull
+	@FutureOrPresent(message = "현재 또는 미래의 날짜만 가능합니다.")
+	LocalDate targetDate;
+
+
+    다. Controller 작업
+       - 양방향 적용( two-way binding )
+
+        Controller -------------------------> jsp
+                   <-------------------------
+
+
+      - GET 방식과 POST 방식 요청에 전부 Command Bean(DTO)을 모델로 사용해야 된다.
+                       화면요청(GET)
+          Controller -------------------------> jsp
+                   <-------------------------
+		       실제요청(POST)
+
+
+
+
+
 
 inky4832@daum.net ( github owner )
 inky4833@gmail.com ( 협력자 )
 	
 
-I18N ( 국제화 )
 폼 유효성 체크
-MySQL+Mybatis
-ShopMiniMall ( SpringSecurity 적용전 )
+webJar
+
+ShopMiniMall + MySQL+Mybatis( SpringSecurity 적용전 )
 
 SpringSecurity
 ShopMiniMall ( SpringSecurity 적용후 )
