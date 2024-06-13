@@ -1,0 +1,156 @@
+###################################################################################
+SpringSecurity 
+
+1. 제공파일
+
+  - 의존성
+      		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+        <dependency>
+	       <groupId>org.springframework.boot</groupId>
+	       <artifactId>spring-boot-devtools</artifactId>
+	    </dependency> 
+	    
+	      <!-- JSP 사용 -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency> 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		 <dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>bootstrap</artifactId>
+		    <version>5.1.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>jquery</artifactId>
+		    <version>3.6.0</version>
+		</dependency>
+
+   - application.properties
+       # tomcat의 기본 port 변경
+	server.port=8090
+	server.servlet.context-path=/app
+
+
+	# JSP 설정
+	spring.mvc.view.prefix=/WEB-INF/views/
+	spring.mvc.view.suffix=.jsp
+
+
+    - MemberDTO.java
+       public class Member {
+
+	@NotBlank(message = "적어도 한글이상")
+	String userid;
+	
+	String passwd;
+	
+	@NotBlank(message = "적어도 한글이상")
+	String username;
+
+
+2. SpringSecurity
+ 
+  1) 개요
+    - 사용자의 인증(Authentication) 과 권한(Authorization )에 활용하는 기술로서
+      Spring 의 서브 프로젝트임.
+
+    인증(Authentication): ID/PW 이용해서 체크하는 작업.
+    권한(Authorization ): 인증후 접근 가능한 자원을 구분하는 작업.
+                         ROLE 이용해서 구분함.
+
+
+  2) 실습1 ( security 의존성 설정 및 계정과 비번 사용자 설정 )
+
+    - 의존성 설정
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-security</artifactId>
+	</dependency>
+
+    - 의존성 설정이후의 변환된 상황
+    
+       가. 자동으로 로그인/로그아웃 관리
+          로그인은 /login 이고
+	  로그아웃은 /logout 임.
+
+       나. 콘솔에 비번을 다음과 같이 알려줌. ( 비번은 실행할때마다 매번 바뀜 )
+
+      계정명: user
+      Using generated security password: b4252567-116a-4081-8bbd-9b8ff523d4ce
+                                         f852725e-4049-457a-a321-a8986caa51ed
+
+      비번이 매번 바뀜.
+      /home으로 요청하면 로그인화면이 나오고 인증하면 /home으로 요청이 가능해짐.
+      인증결과는 세션에 저장이 된다.  (*************)
+ 
+       다.  계정과 비번을 임의로 지정할 수 있다.
+         
+	  # application.properties
+	   
+	   # 계정 및 비번 임의 지정( 재실행도 고정됨 )
+		spring.security.user.name=inky4832
+		spring.security.user.password=1234
+
+
+  2) 실습2 ( 회원가입 + 비번은 반드시 암호화해야 된다. )
+ 
+     - member 테이블 작성
+        -- use testdb;
+	-- show full columns from todo;
+
+	drop table if exists member;
+
+	create table member
+	( userid    varchar(255) not null COMMENT '아이디',
+	  passwd  varchar(255) not null COMMENT '비밀번호',
+	  username varchar(255) not null COMMENT 'TODO 작성자',
+	  primary key(userid)
+	);
+
+      - 의존성설정
+
+          	<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+		    <artifactId>mybatis-spring-boot-starter</artifactId>
+		    <version>2.1.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.33</version>
+		</dependency>
+
+       - application.properties DB연동설정
+
+                 #  DB 연동위한 4가지 정보 설정
+		spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+		spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+		spring.datasource.username=root
+		spring.datasource.password=1234
+
+
+		# 별칭
+		mybatis.type-aliases-package=com.exam.dto
+		# mapper 등록
+		mybatis.mapper-locations=com/exam/mapper/*Mapper.xml
+
+
+      - 비번 암호화 구현
+        		// 비번 암호화 필수
+		String encptPw = 
+				new BCryptPasswordEncoder().encode(member.getPasswd());
+		member.setPasswd(encptPw);
