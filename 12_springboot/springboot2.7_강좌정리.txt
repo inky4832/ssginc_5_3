@@ -2104,15 +2104,57 @@ public class WebMvc implements WebMvcConfigurer{
     다. Controller 작업
        - 양방향 적용( two-way binding )
 
+         Model생성
         Controller -------------------------> jsp
                    <-------------------------
 
 
       - GET 방식과 POST 방식 요청에 전부 Command Bean(DTO)을 모델로 사용해야 된다.
+
                        화면요청(GET)
           Controller -------------------------> jsp
                    <-------------------------
 		       실제요청(POST)
+
+       - Get 요청 구현
+                @GetMapping("/member")  // 화면요청
+		public String memberForm(ModelMap m) {
+			
+			MemberDTO dto = new MemberDTO();
+	//		MemberDTO dto = new MemberDTO("aaa","홍길동", LocalDate.now());
+	//		m.addAttribute("memX", dto);  // 임의의 값 지정하면 에러 발생
+			m.addAttribute("memberDTO", dto);  // command bean으로 반드시 설정한다.
+			
+			return "memberForm"; 
+		}
+       - Post 요청 구현
+               @PostMapping("/member") // 로직요청
+		public String member(@Valid  MemberDTO dto, BindingResult result) {
+			System.out.println("MemberDTO" + dto);
+			if(result.hasErrors()) {
+				return "memberForm"; 
+			}
+			
+			return "memberInfo"; 
+		}
+
+
+       - memberForm.jsp
+           <%@ taglib uri="http://www.springframework.org/tags/form" 
+    prefix="form"%>
+           <form:form  method="post" 
+			   modelAttribute="memberDTO">
+		 아이디:<form:input type="text" path="userid" />
+		      <form:errors path="userid"></form:errors>
+		 <br>
+		 이름:<form:input type="text" path="username" />
+		      <form:errors path="username"></form:errors>
+		 <br>
+		 날짜:<form:input type="date" path="targetDate" />
+		      <form:errors path="targetDate"></form:errors>
+		 <br>
+		 <input type="submit" value="가입">
+		</form:form>
 
 
 
