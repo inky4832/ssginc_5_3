@@ -18,7 +18,7 @@ Git / Github
   위 정보는 C:\Users\ssginc76\의 .gitconfig 에 저장됨.
 
 
-3. 로컬저장소
+3. 로컬저장소 생성 버전관리 기본1
 
    가. 디렉토리 생성
     c:\\git_study
@@ -109,3 +109,77 @@ Git / Github
 
 	- add + commit 한번에
 	 git commit -am "third commit"
+
+
+4. 불필요한 파일 및 폴더 제거
+https://www.toptal.com/developers/gitignore
+
+  .gitignore  파일 작성
+
+   *.bak
+  .gitignore
+
+5. git 의 저장 구조 ( 기억하기 )
+
+
+ 작업트리                     스테이지                   저장소
+
+
+
+작업트리: git init 만든 git_study 의미
+스테이지 : git add 사용.
+저장소:   git commit 사용.
+
+ git diff 비교 ( 작업트리와 저장소 비교 )
+ git diff --staged 비교 ( 작업트리와 스테이지 비교 )
+
+
+6. 작업 되돌리기 ( 롤백 기능 )
+
+  1) 작업트리 되돌리기
+
+     - git_rollback 폴더작성
+     - git init
+     - hello.txt 파일 생성
+     - hello1 저장
+     - git add hello.txt
+       git commit -m "first commit"
+
+     - hello2 저장  <== 이 작업을 취소할 예정임.
+     
+     - 되돌리기
+       git restore hello.txt
+
+       이후 hello.txt 파일에 hello1 만 남음.
+
+
+  2) 스테이지 되돌리기
+
+     - 현재상태확인
+     -  hello2 저장
+     - git status
+          On branch main
+	Changes not staged for commit:
+	  (use "git add <file>..." to update what will be committed)
+	  (use "git restore <file>..." to discard changes in working directory)
+		modified:   hello.txt
+
+    - git add hello.txt
+   
+    - git status
+       On branch main
+	Changes to be committed:
+	  (use "git restore --staged <file>..." to unstage)
+		modified:   hello.txt
+
+    - 스테이지 되돌리기
+         git restore --staged hello.txt
+          
+    - git status
+          On branch main
+	Changes not staged for commit:
+	  (use "git add <file>..." to update what will be committed)
+	  (use "git restore <file>..." to discard changes in working directory)
+		modified:   hello.txt
+
+  3) 저장소 되돌리기
