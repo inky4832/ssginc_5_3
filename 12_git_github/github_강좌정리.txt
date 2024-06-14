@@ -1,0 +1,111 @@
+
+Git / Github 
+
+1. 환경설정
+
+   https://git-scm.com/download/win
+
+
+2. 사용자 설정 ( owner )
+
+  inky4832@daum.net (owner)
+  inky4833@gmail.com ( collaborator)
+
+  git config --global user.name "inky4832"
+  git config --global user.email "inky4832@daum.net"
+
+
+  위 정보는 C:\Users\ssginc76\의 .gitconfig 에 저장됨.
+
+
+3. 로컬저장소
+
+   가. 디렉토리 생성
+    c:\\git_study
+
+   나. git_study 경로가 가서
+    
+     git init  <=== 로컬저장소로 만듬.  .git 폴더가 생김.이곳에 버전들이 저장됨.
+   
+   다. 저장소 상태 확인
+     
+     git status
+
+     On branch main
+     No commits yet
+     nothing to commit (create/copy files and use "git add" to track)
+
+     위 결과는 다음과 같다.
+      - 현재 브랜치는 main
+      - 아직 커밋할 파일이 없다.
+
+   라. 파일 작성 ( hello.txt )
+
+     - hello1 입력
+
+     - git status
+
+       On branch main
+        No commits ye
+	Untracked files:
+        (use "git add <file>..." to include in what will be committed)
+        hello.txt
+        hello.txt.bak
+
+       nothing added to commit but untracked files present (use "git add" to track)
+
+        위 결과는 다음과 같다.
+      - 현재 브랜치는 main
+      - Untracked files 는 한번도 버전관리자 되지 않은 파일 의미. 즉 git 추적해본적이 없는 파일.
+
+   마. 추적 파일 등록
+
+      git add 파일명
+      git add 파일명  파일명2  ....
+      git add sub/파일명
+      git add  . 
+
+     - git add hello.txt 
+
+      git status
+
+
+        Changes to be committed:
+       (use "git rm --cached <file>..." to unstage)
+        new file:   hello.txt
+
+         위 결과는 다음과 같다.
+	 - hello.txt 파일의 변경 사항을 추적하겠다. 따라서 commit 하자. 의미.
+
+     마. 버전 생성
+
+       git commit -m "커밋메시지"
+
+       git commit -m "first commit"
+
+       git status
+
+       On branch main
+       nothing  to commit,~
+
+      위 결과는 다음과 같다.
+      - 더 이상 관리할 파일이 없다.
+
+     바. 내용수정하고 add 하고 commit 
+
+        - hello2 추가
+	- git add hello.txt
+	- git commit -m "second commit"
+
+     사. 버전 확인
+
+       git log
+       git reflog
+
+
+     아. 내용수정하고 add 하고 commit 
+
+        - hello3 추가
+
+	- add + commit 한번에
+	 git commit -am "third commit"
