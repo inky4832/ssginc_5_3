@@ -182,4 +182,42 @@ https://www.toptal.com/developers/gitignore
 	  (use "git restore <file>..." to discard changes in working directory)
 		modified:   hello.txt
 
-  3) 저장소 되돌리기
+  3) 저장소 되돌리기 ( 최종 commit 된 버전 되돌리기 )
+
+   - hello2 추가
+   - git commit -am "second commit"
+
+   - hello3 추가
+   - git commit -am "third commit"
+
+
+   git reset --hard 해시값
+
+
+7. 브랜치 작업
+
+  1) 브랜치 보기
+
+    git branch
+
+  2) 브랜치 생성
+
+    git branch  <브랜치명>
+
+   예> git branch hotfix
+
+  3) 브랜치 변경
+
+    git checkout <브랜치명>
+
+    예> git checkout hotfix
+
+
+  4) 브랜치 병합
+    - 반드시 main에서 병합처리 한다.
+
+     git merge <브랜치명>
+    
+    예> git merge hotfix
+
+########################################################
