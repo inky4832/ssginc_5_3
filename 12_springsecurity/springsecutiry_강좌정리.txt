@@ -86,11 +86,12 @@ SpringSecurity
           로그인은 /login 이고
 	  로그아웃은 /logout 임.
 
-       나. 콘솔에 비번을 다음과 같이 알려줌. ( 비번은 실행할때마다 매번 바뀜 )
+       나. 콘솔에 암호화된 비번을 다음과 같이 알려줌. ( 비번은 실행할때마다 매번 바뀜 )
 
       계정명: user
       Using generated security password: b4252567-116a-4081-8bbd-9b8ff523d4ce
                                          f852725e-4049-457a-a321-a8986caa51ed
+       
 
       비번이 매번 바뀜.
       /home으로 요청하면 로그인화면이 나오고 인증하면 /home으로 요청이 가능해짐.
@@ -154,3 +155,69 @@ SpringSecurity
 		String encptPw = 
 				new BCryptPasswordEncoder().encode(member.getPasswd());
 		member.setPasswd(encptPw);
+
+
+   2) 실습3
+
+     - 이전까지는 인증이 필요없는 요청도 (/home, /signup) security가 인증하도록 강제함.
+     - 기본적으로 동작되는 security의 FilterChain을 커스터마이징이 가능하다.
+
+        예> 불필요한 인증제거
+	   로그인화면을 사용자가 만든 화면으로 변경
+	   인증실패시/인증성공시 사용자가 특정 위치로 리다이렉트 가능
+	   로그아웃 커스터마이징
+
+      - 커스터마이징 시작했으면 인증제거~로그아웃 끝까지 재설정 작업이 필요하다.
+
+         @Configuration
+       public class SecurityFilterChainConfig {
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+		
+		//커스터마이징 처리
+		
+		//1. 불필요한 인증제거
+		http.authorizeRequests()
+		    .antMatchers("/login","/home","/signup","/webjars/**","/images/**").permitAll()
+		    .anyRequest()
+		    .authenticated();
+		
+		//2. 로그인 관련 작업
+		
+		http.formLogin()     // 사용자가 만든 로그인화면으로 인증처리 하겠음.
+		    .loginPage("/login") // 로그인 페이지로 갈수 있는 요청맵핑값 <a href="login">로그인
+		    .loginProcessingUrl("/auth") // <form  action="auth"  method="post"
+		    .usernameParameter("userid")    // <input name="userid">
+		    .passwordParameter("passwd")       // <input name="passwd">
+		    .failureForwardUrl("/login_fail")        // 로그인 실패시 리다이렉트되는 요청맵핑값
+		    .defaultSuccessUrl("/login_success", true); // 로그인 성공시 리다이렉트되는 요청맵핑값
+		    
+	     //3. csrf 비활성화
+		http.csrf().disable();
+
+		    * CSRF(Cross Site Request Forgery: 요청 사이트간 위조 )
+		     - POST와PUT할 때 신경써야 된다.
+		     - security가 자동으로 CSRF 방지하도록 자동으로 활성화 되어 있음.
+                     - 정상적으로 로그인(쿠키에 정보가 저장됨)하고 로그아웃하지 않은 상태에서 
+		       악성사이트에 접속하면 정상적인 작업의 쿠키정보를 악용할 수 있다.
+		     
+		
+		 //4. 로그아웃 관련 작업
+		 http.logout()
+		     .logoutUrl("/logout")   // security가 자동으로 로그아웃 처리해주는 요청맵핑값
+		     .logoutSuccessUrl("/home");  // logout 성공시 리다이렉트 되는 요청맵핑값
+		     
+		return http.build();
+	}
+	
+}
+
+    2) 실습4
+     
+       - loginForm에서 입력한 userid와 passwd를 DB와 비교하는 작업.
+
+         인증이 성공하면 세션에 Member 저장.
+	 인증이 실패하면 에러를 명시적으로 발생.
+
+       - 실제 구현하는 빈을 작성.
