@@ -2667,3 +2667,29 @@ REST 강좌정리
    - header에 전달되는 타입을 지정해애 된다.
 
        Content-Type: application/json
+
+
+8. 데이터 삭제
+
+  - DELETE 방식
+  - @PathVariable 사용해서 삭제하고자 하는 값을 전달
+
+##############################################################################
+##############################################################################
+9. POST 응답 처리 개선하기
+
+  1) status 명시적으로 설정
+
+     - ResponseEntity 의 메서드 사용하여 status 값을 반환할 수 있음.
+
+     - status 값 종류
+
+        200: 성공
+	201: Created 성공
+
+
+        400: bad request  ( ResponseEntity.badRequest().build() )
+	404: Not Found.
+        405: Method Not allowed.
+
+	500: Internal Server Error.
