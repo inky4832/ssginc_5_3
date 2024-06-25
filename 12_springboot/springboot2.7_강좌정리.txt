@@ -2336,11 +2336,301 @@ public class MainController {
 inky4832@daum.net ( github owner )
 inky4833@gmail.com ( 협력자 )
 	
+###################################################################################################
+REST 강좌정리
 
-폼 유효성 체크
-webJar
+1. REST 
+  - REpresentational State Transfer ( 표현  상태 전송 )
+  - 웹 어플리케이션 개발 방법론중의 하나로서 클라이언트와 서버간의 상태정보를 표현하는 방식을 의미.
+    ( 어제까지의 개발 방법론이 SOAP 임 )
 
-ShopMiniMall + MySQL+Mybatis( SpringSecurity 적용전 )
 
-SpringSecurity
-ShopMiniMall ( SpringSecurity 적용후 )
+  1) SOAP 아키텍쳐
+
+                       요청
+     클라이언트   -------------------------> 서버
+    (웹브라우저)  <-------------------------   (JSP/Thymeleaf 등 )
+                      응답( html )
+
+
+  2) REST 아키텍쳐
+
+                      요청 ( XML/JSON ) 
+    클라이언트     ---------------------------> 서버
+    (웹브라우저,   <-------------------------
+     TV,             응답 ( XML/JSON )  
+     자동차,
+     ...)
+
+2.  REST 디자인 가이드 구글링 할것.
+
+3.  REST 표현
+
+  1) 데이터는 URI에 포함되어 전달된다.
+
+    예> 이전 SOAP 방식에서 회원을 삭제하는 작업
+
+       http://localhost:8090/app/delMember?userid=1
+
+  
+
+       REST 방식에서 회원을 삭제하는 작업
+
+       http://localhost:8090/app/member/1
+
+   
+   2) 클라이언트 요청 방식 
+
+     예> 이전 SOAP 방식
+
+        GET : 조회
+	POST: 생성/수정/삭제
+
+
+        REST 방식
+
+	GET : 조회
+	POST: 생성
+	PUT:  수정
+	DELETE: 삭제
+
+      기본적으로 form을 사용하는 html에서는 GET/POST 방식만 지원된다.
+      따라서 도구가 필요하다. ( curl, postman, 크롬브라우저의 플러그인 Talend Test API )
+
+4. REST 실습
+
+  1) 의존성
+       <dependency>
+	  <groupId>org.springframework.boot</groupId>
+	  <artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-devtools</artifactId>
+	</dependency>
+
+
+   2) application.properties
+    
+      # application.properties
+	logging.level.com.exam=info
+	logging.level.org.springframework=info
+
+	# tomcat port 번호 변경
+	server.port=8090
+
+	# context 명 변경
+	server.servlet.context-path=/app
+
+
+   3) UserDTO.java  작성
+
+      - lombok 라이브러리
+
+      가. pom.xml 등록
+        	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+	<dependency>
+	    <groupId>org.projectlombok</groupId>
+	    <artifactId>lombok</artifactId>
+	</dependency>
+
+
+      나. 현재 사용중인 sts(eclipse)에 lombok 설정
+         
+	  https://projectlombok.org/download 가서 lombok.jar 다운받음.
+
+	  C:\Users\ssginc76 저장.
+
+	  cmd 창 열고 cd C:\Users\ssginc76 감.
+
+	  lombok.jar 실행하자
+
+	  java -jar lombok.jar 
+
+	  maven update 실행하자
+
+	  sts 재시작
+
+5. REST + MySQL + MyBatis 연동
+
+  1) 의존성
+     		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+		    <artifactId>mybatis-spring-boot-starter</artifactId>
+		    <version>2.1.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.33</version>
+		</dependency>
+
+
+  2) application.properties 설정
+
+      #  DB 연동위한 4가지 정보 설정
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.datasource.url=jdbc:mysql://localhost:3306/testdb
+	spring.datasource.username=root
+	spring.datasource.password=1234
+
+
+	# 별칭
+	mybatis.type-aliases-package=com.exam.dto
+
+	# mapper 등록
+	mybatis.mapper-locations=com/exam/mapper/*Mapper.xml
+
+  3) table  생성
+
+     use testdb;
+
+	create table person (
+	     id int primary key,
+	     username varchar(20) not null,
+	     birthdate  date 
+	);
+
+	insert into person (id, username, birthdate ) values ( 10, '홍길동', current_date() );
+	insert into person (id, username, birthdate ) values ( 20, '이순신', current_date() );
+	insert into person (id, username, birthdate ) values ( 30, '유관순', current_date() );
+
+	commit;
+
+    4) PersonDTO.java ( lombok 사용 )
+
+        @Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Builder
+	@Getter
+	@Alias("PersonDTO")
+	public class PersonDTO {
+
+		int id;
+		String username;
+		LocalDate birthdate;
+	}
+
+    
+       5) PersonMapper.xml 와 PersonMapper.java
+
+
+          <mapper namespace="com.exam.mapper.PersonMapper">
+ 
+	    <select id="findAll" resultType="PersonDTO">
+	       select id, username, birthdate
+	       from person
+	       order by id desc
+	    </select>
+	   
+	</mapper>
+
+	@Mapper
+	public interface PersonMapper {
+
+		public List<PersonDTO>  findAll();
+	}
+
+
+       6) PersonService.java  , PersonServiceImpl.java
+
+          public interface PersonService {
+	
+	      public List<PersonDTO>  findAll();
+
+	 }  
+
+	 @Service
+	public class PersonServiceImpl implements PersonService {
+
+		PersonMapper personMapper;
+		
+		public PersonServiceImpl(PersonMapper personMapper) {
+			this.personMapper = personMapper;
+		}
+
+		@Override
+		public List<PersonDTO> findAll() {
+			return personMapper.findAll();
+		}
+
+	}
+
+	7) PersonController.java
+
+	   @RestController  // @Controller + @ResponseBody
+		@Slf4j
+		public class PersonController {
+			
+			PersonService personService;
+			
+			public PersonController(PersonService personService) {
+				this.personService = personService;
+			}
+
+			@GetMapping("/persons") // 요청맵핑값은 REST API 가이드 문서를 참고하자.
+			public List<PersonDTO>  findAll() {
+				
+				List<PersonDTO> list= personService.findAll();
+				log.info("logger: findAll-{}", list);
+				return list;
+			}
+		}
+
+6. 파라미터 전달
+
+    - REST는 기본적으로 데이터를 URI에 포함되어 전달된다.
+
+    예>  SOAP 방식
+
+         GET http://localhost:8090/app/persons?id=10
+         GET http://localhost:8090/app/persons?id=20
+
+	 ==>  @GetMapping("/persons")  <== URL은 querystring 제외
+	     
+	      @RequestParam("id") String id
+
+ 
+        REST 방식
+    
+        GET http://localhost:8090/app/persons/10
+	GET http://localhost:8090/app/persons/20
+
+
+        @GetMapping("/persons/{변수}")    <== URL은 마지막 값까지 포함
+
+	     @PathVariable("변수") String id
+
+
+	GET http://localhost:8090/app/persons/10/서울
+	GET http://localhost:8090/app/persons/20/부산
+
+         @GetMapping("/persons/{변수1}/{변수2}") 
+
+	    @PathVariable("변수1") String id, @PathVariable("변수2") String address
+
+
+        GET http://localhost:8090/app/persons/10/address/서울
+	GET http://localhost:8090/app/persons/20/address/부산
+
+	@GetMapping("/persons/{변수1}/address/{변수2}") 
+
+	   @PathVariable("변수1") String id, @PathVariable("변수2") String address
