@@ -2704,3 +2704,62 @@ REST 강좌정리
 
    2) status + location 알려주기
 
+      @PostMapping("/persons2")
+	public ResponseEntity<PersonDTO> save2(@RequestBody   PersonDTO dto) {
+		log.info("logger: PersonDTO-{}", dto);			
+		int n = personService.save(dto);
+		
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+				                                  .path("/{id}")
+				                                  .buildAndExpand(dto.getId())
+				                                  .toUri();
+
+		return ResponseEntity.created(location).build();    
+	}
+
+
+10. HATEOAS ( 헤이티오스 :           ) , REST API 성숙도 모델 4단계
+
+   1) 개요
+
+   2) 구현
+
+     가. 의존성
+
+	 <dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-hateoas</artifactId>
+	</dependency>
+
+
+    나. EntityModel 과 WebMvcLinkBuilder 이용
+
+       WebMvcLinkBuilder: 추가적인 링크 생성.
+       EntityModel      : 링크 저장소 역할.
+
+
+       public EntityModel<PersonDTO> findById(@PathVariable int id) {
+		log.info("logger: findById-{}", id);
+		
+		PersonDTO dto = personService.findById(id);
+		/////////////////////////////////////////////////
+		// HATEOAS 구현
+		EntityModel<PersonDTO> entityModel = EntityModel.of(dto);
+		
+		//링크1 - 현재요청 링크
+		WebMvcLinkBuilder link1 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findById(id));
+		
+		//링크2 - 다음요청 링크
+		WebMvcLinkBuilder link2 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findById(id+1));
+		
+		//링크3 - 모든요청 링크
+		WebMvcLinkBuilder link3 = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).findAll());
+				
+		
+		// 링크를 모델에 저장
+		entityModel.add(link1.withRel("current_link"));
+		entityModel.add(link2.withRel("next_link"));
+		entityModel.add(link3.withRel("all_link"));
+		/////////////////////////////////////////////////
+		return entityModel;
+	} 
