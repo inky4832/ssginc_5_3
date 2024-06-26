@@ -2687,6 +2687,7 @@ REST 강좌정리
 //		return ResponseEntity.noContent().build();    // 204
 //		return ResponseEntity.created(null).build();    // 201
 //		return ResponseEntity.status(201).build();    // 201
+		return ResponseEntity.status(HttpStatus.CREATED).build();   
 //		return ResponseEntity.ok().build();    // 200
 		return ResponseEntity.ok(dto);    // 200
 
@@ -2763,3 +2764,100 @@ REST 강좌정리
 		/////////////////////////////////////////////////
 		return entityModel;
 	} 
+
+
+/////////////////////////////////////////////////////////////////////////
+11. 요청한 데이터가 없을 때 처리 방법 개선
+
+  1) 개요
+    현재는 요청한 데이터가 없어도 status 값은 200 이고 Body는 no Content로 반환됨.
+    이 상황을 좀더 직관적인 status 값인 404로 알려주자.
+
+
+  2) 구현
+   
+    가. 사용자 예외 클래스 생성
+
+        @ResponseStatus(code = HttpStatus.NOT_FOUND)
+        public class UserException extends RuntimeException{
+
+              public UserException(String mesg){
+                   super(mesg);
+	      }
+	}
+
+    나. Controller 코드
+
+       	@GetMapping("/persons/{id}")
+	public PersonDTO findById(@PathVariable int id) {
+		log.info("logger: findById-{}", id);
+		PersonDTO dto = personService.findById(id);
+		
+		if(dto==null) {
+			throw new UserException("요청한 "+id+" 에 해당하는 데이터가 없음");
+		}
+		
+		return dto;
+	}
+	
+/////////////////////////////////////////////////////////////////////////
+12. 폼 유효성 체크
+
+  1) 의존성 설정
+   
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-validation</artifactId>
+	</dependency>
+
+
+  2) DTO 에 조건 지정
+
+       public class PersonDTO {
+
+	int id;
+	
+	@NotEmpty(message = "이름은 필수 입니다.")
+	String username;
+	
+	@Past(message = "과거날짜만 가능합니다.")
+	LocalDate birthdate;
+	
+	
+   3) Controller 파라미터 @Valid 지정 ( REST 에서는 BindingResult가 필요 없음 )
+    
+
+        @PostMapping("/persons")
+	public PersonDTO save(@Valid @RequestBody   PersonDTO dto) {
+		log.info("logger: PersonDTO-{}", dto);			
+		int n = personService.save(dto);
+		return dto;
+	}
+
+  ==> 여기까지 설정한 후 실습하면 조건에 위배되었을 경우에 400 에러가 발생이 된다.
+      기본적으로 제공되는 에러 메시지는 다음과 같다.
+          {
+		"timestamp": "2024-06-26T04:13:23.285+00:00",
+		"status": 400,
+		"error": "Bad Request",
+			"trace": "org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.exam.dto.PersonDTO com.exam.controller.PersonController.save(com.exam.dto.PersonDTO): [Field error in object 'personDTO' on field 'birthdate': rejected value [2024-12-23]; codes [Past.personDTO.birthdate,Past.birthdate,Past.java.time.LocalDate,Past]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [personDTO.birthdate,birthdate]; arguments []; default message [birthdate]]; default message [과거날짜만 가능합니다.]] \r\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:141)\r\n\tat org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)\r\n\tat org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:179)\r\n\tat org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:146)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)\r\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)\r\n\tat org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)\r\n\tat org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)\r\n\tat org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)\r\n\tat org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)\r\n\tat org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)\r\n\tat javax.servlet.http.HttpServlet.service(HttpServlet.java:555)\r\n\tat org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)\r\n\tat javax.servlet.http.HttpServlet.service(HttpServlet.java:623)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)\r\n\tat org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)\r\n\tat org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)\r\n\tat org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)\r\n\tat org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)\r\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)\r\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)\r\n\tat org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:168)\r\n\tat org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)\r\n\tat org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)\r\n\tat org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)\r\n\tat org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)\r\n\tat org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)\r\n\tat org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)\r\n\tat org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)\r\n\tat org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)\r\n\tat org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:928)\r\n\tat org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1794)\r\n\tat org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)\r\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)\r\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)\r\n\tat org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\r\n\tat java.base/java.lang.Thread.run(Thread.java:834)\r\n",
+			"message": "Validation failed for object='personDTO'. Error count: 1",
+			"errors":[
+			{
+			"codes":["Past.personDTO.birthdate", "Past.birthdate", "Past.java.time.LocalDate", "Past"],
+			"arguments":[{"codes":["personDTO.birthdate", "birthdate" ], "arguments": null, "defaultMessage": "birthdate",…],
+			"defaultMessage": "과거날짜만 가능합니다.",
+			"objectName": "personDTO",
+			"field": "birthdate",
+			"rejectedValue": "2024-12-23",
+			"bindingFailure": false,
+			"code": "Past"
+			}
+			],
+			"path": "/app/persons"
+			}
+	
+
+  4) 발생된 예외에 대한 커스터마이징 처리
+
+    - @ControllerAdvice + extends ResponseEntityExceptionHandler
