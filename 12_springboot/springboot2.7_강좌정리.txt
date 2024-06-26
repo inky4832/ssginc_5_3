@@ -2929,5 +2929,29 @@ extends ResponseEntityExceptionHandler {
       - Talend Test API 에서 header 설정.
 
 
+/////////////////////////////////////////////////////////////////////////
+14. 필터링(filtering)
 
+ 1) 기능 2가지
+
+   - json의 키값 변경: @JsonProperty("변경할key")
+   - 값 제외        : @JsonIgnore
+
+   ==> 같이 사용 불가
+
+
+  2) 구현
+	
+    public class PersonDTO {
+
+	int id;
+	
+	@JsonProperty("user_name")
+	String username;
+	
+	@JsonIgnore
+	LocalDate birthdate;
+	
+	
+   }   
 
