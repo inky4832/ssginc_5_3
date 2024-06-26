@@ -2955,3 +2955,64 @@ extends ResponseEntityExceptionHandler {
 	
    }   
 
+/////////////////////////////////////////////////////////////////////////
+15. REST 기반의 Spring Security 적용
+
+  1) 의존성 설정
+     	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-security</artifactId>
+	</dependency>
+
+
+
+###########################################################################
+16. Token
+
+   1)개요
+
+    - REST 기반의 어플리케이션에서 사용되는 인증방식
+    - 사용자의 id+pw+추가정보 를 암호화한 것이다.
+
+    2) Token 구성요소
+
+      - header, payload, signature 3가지로 구성
+
+      가. header
+           type: JWT
+	   알고리즘
+
+      나. payload
+           -사용자가 원하는 데이터 설정
+           -표준속성이 제공
+	    ( sub: 주제,
+	      exp: 만기일
+	      iat: token생성시간
+	      ..
+	     )
+      다. signature
+            - 시크릿 정보 ( 토큰이 유효한지 체크 기능 )
+
+    ==> 암호화된 토큰의 decode는 jwt.io 에서 확인이 가능.
+
+     3) Token flow
+
+       request:
+           {
+             "userid":"inky4832",
+	     "passwd":"1234",
+	      추가정보:값
+           }
+
+       response:
+           {
+               "token":토큰값
+	   }
+        ===> react에서 local storage에 저장해두고 필요시 사용됨.
+
+     4) token header 설정
+        {
+
+           Authorization: Bearer 토큰값
+
+	}
