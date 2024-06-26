@@ -2861,3 +2861,73 @@ REST 강좌정리
   4) 발생된 예외에 대한 커스터마이징 처리
 
     - @ControllerAdvice + extends ResponseEntityExceptionHandler
+
+        @ControllerAdvice  // 전역 예외처리
+public class CustomResponseEntityExceptionHandler 
+extends ResponseEntityExceptionHandler {
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex,
+			HttpHeaders headers, 
+			HttpStatus status, 
+			WebRequest request) {
+	
+		//에러메시지 저장
+		ErrorDetails details = ErrorDetails.builder()
+										   .timestamp(LocalDateTime.now())
+				                           .message(ex.getMessage())
+				                           .path(request.getDescription(false))
+				                           .build();
+		
+	
+		return new ResponseEntity(details, HttpStatus.BAD_REQUEST);
+	}
+}
+
+		@Data
+		@AllArgsConstructor
+		@NoArgsConstructor
+		@Builder
+		@Getter
+		class ErrorDetails{
+			
+			LocalDateTime timestamp;
+			String message;
+			String path;
+		}
+
+ /////////////////////////////////////////////////////////////////////////
+13. I18N
+
+  1) 리소스 번들 파일 작성
+
+    src/main/resource 
+                 bundle
+		     message.properties  ( 기본 )
+		     message_en.properties ( 영어 )
+		     message_ko.properties ( 한국어 )
+
+       
+  2) application.properties 에 번들파일 등록
+
+      # 리소스 번들 파일 등록
+	spring.messages.basename=bundle/message
+	spring.messages.encoding=utf-8
+
+	spring.messages.fallback-to-system-locale=false
+
+
+   3) Controller 에서 번들 참조 + header 값 얻기
+     
+     - MessageSource API 이용
+     - header 값 얻기
+
+
+   4) 요청 header 값으로 언어 선택
+
+      - Talend Test API 에서 header 설정.
+
+
+
+
