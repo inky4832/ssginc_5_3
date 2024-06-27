@@ -86,7 +86,80 @@ Reactjs 강좌정리
   my-app
      node_modules ( maven의 .m2 저장소 역할 )
      public
-       - index.html ( 메인 홈페이지 화면,  화면을 구성하는 특정 js 파일을 이용해서 화면 랜더링함. )
+       - index.html ( 메인 홈페이지 화면,  화면을 구성하는 특정 js (index.js)파일을 이용해서 화면 랜더링함. )
      src
+       - index.js ( App.js 를 import 해서 App.js의 화면을 랜더링 함 )
+       - App.js   ( 결론적으로 App.js에서 화면 구축하면 됨 )
+
      package.json ( maven의 pom.xml 기능 )
      README.md  ( 실행 명령어 제공 )
+
+  
+   ==> *.js 마다 *.css 만드는 것이 일반적인 방법임.
+
+5. public  vs src
+ 
+  ==> 이미지 저장 가능하는 폴더임
+
+  1) public
+     - 외부에서 접근이 가능
+     - build할 때 누락될 수 있음. 따라서 권장안함.
+
+  2) src
+     -assets 폴더에 저장.
+     -외부에서 접근 불가 ( private)
+     - build할 때 누락없이 빌드 가능.
+
+
+6. 컴포넌트(component)
+
+ 1) 개념
+   -웹 화면에서 보여지는 개별적인 블럭 의미. ( JSP의 top.jsp,menu.jsp,bottom.jsp 비슷 )
+   -일반적으로 *.js 파일로 구현됨.
+   -*.js 당 *.css 형태로 구현됨. 
+    사용방법은 import './App.css' 형식을 사용함.
+
+   -일반적으로 중첩된 형태로 구현됨.
+   
+ 2) 컴포넌트 종류 2가지
+
+   가. 함수형 컴포넌트
+     - 현재 거의 개발할 때 사용됨.
+
+     예> 
+         //함수선언식 ( 이름있는 함수)
+	 function fun(){}
+
+         //함수표현식 ( 익명 함수 )
+	 const fun = function(){};
+
+	 //arrow 표현식
+	 const fun = ()->{};
+
+   나. 클래스 컴포넌트
+      - skip함
+
+ 3) 함수형 컴포넌트
+  
+  가. 함수명은 반드시 대문자로 지정해야 된다.
+    이유는 일반태그가 아닌 React 컴포넌트임을 알려주기 위함.
+
+    예>  function App(){}
+        function Person(){}
+	function Menu(){}
+
+  
+      컴포넌트 사용: <App />
+                 <Person />
+		 <Menu />
+
+  나. 반드시 return 해야 된다.
+
+   예> function Person(){
+   
+         return(
+	    //JSX 코드 작성 <=== 화면에 랜더링됨.
+	 );
+      }
+
+  다. 외부에서 사용할려면 반드시 export 해야 된다.
