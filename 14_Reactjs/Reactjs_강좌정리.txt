@@ -1,0 +1,92 @@
+Reactjs 강좌정리
+
+1. 개요
+
+  - facebook 제공
+  - 프런트엔드 프레임워크 ( React.js, Vue.js, Angular )
+     ==> JS 기반
+  - MVC 패턴에서 V 담당.
+  - 가상 DOM 이용해서 빠른 DOM 처리가 가능.
+  - 개발방법 2가지 
+    가. 함수형 
+       - 현재 개발 방법
+       - 일반함수 가능
+         arrow 함수 가능
+
+    나. 클래스
+       - 과거에 주로 사용됨.
+
+2. React 종류 3가지
+
+   1) CSR ( Client Side Rendering )
+     - 웹브라우저에서 화면을 만들고 랜더링하는 방식.
+     - 일반적으로 React.js 라고 부름. 
+
+   2) SSR ( Server Side Rendering )
+     - JSP처럼 서버에서 화면을 만들고 웹브라우에 응답하여 랜더링되는 방식.
+     - 일반적으로 next.js 라고 부름.
+
+   3) Reactive native
+     - 모바일용 React 의미.
+
+
+2. 환경설정
+
+  1) node.js 설치
+    - node --version
+
+  2) VSC 설치
+  3) VSC 플러그인
+    - Reactjs Snippets ( 함수형 기능 제공 )
+
+  4) 크롬 React 확장팩 설치
+
+3. React 프로젝트 생성
+
+  - https://ko.legacy.reactjs.org/docs/create-a-new-react-app.html#createreact-app 참조
+
+
+   1) 리액트 툴체인
+     - facebook 공식 개발툴이고 CSR만 지원됨.
+     - 요즘에는 vite 개발툴도 있음.
+
+   2) 방법
+
+    문법:  npx create-react-app 프로젝트명
+
+    가. 설치
+     npm install npm -g  <== npx create-react-app 실행시 에러날때.
+
+     npx create-react-app my-app
+     cd my-app
+     npm start
+
+    나. my-app 폴더 생성
+
+    다. reactjs 버전 변경
+
+       - maven의 pom.xml 역할의  package.json에서 변경
+
+        "react": "^18.3.1",  ------------> "^18.2.0"
+       "react-dom": "^18.3.1", ------------> "^18.2.0"
+
+       - npm install  실행하여 변경사항을 적용시킴. ( my-app 디렉터리안에서 )
+
+   3) 실행
+
+       cd my-app
+       npm start
+
+
+         Local:            http://localhost:3000        
+         On Your Network:  http://10.10.10.187:3000     
+
+4. my-app 프로젝트 구조
+
+  my-app
+     node_modules ( maven의 .m2 저장소 역할 )
+     public
+       - index.html ( 메인 홈페이지 화면,  화면을 구성하는 특정 js 파일을 이용해서 화면 랜더링함. )
+     src
+     package.json ( maven의 pom.xml 기능 )
+     README.md  ( 실행 명령어 제공 )
