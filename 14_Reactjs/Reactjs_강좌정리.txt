@@ -163,3 +163,61 @@ Reactjs 강좌정리
       }
 
   다. 외부에서 사용할려면 반드시 export 해야 된다.
+
+   - export 사용하는 경우
+
+     예>
+        export {Menu, Bottom};
+
+
+	import {Menu, Bottom} from './components/XXX.js'
+
+
+   - export default 사용하는 경우
+
+    예> 
+        export default Menu;
+
+        import Menu from './components/XXX.js'
+
+7. JSX
+
+  1) 개요
+   - JSX( Javascript XML ).
+   - 웹브라우저에 랜더링되기전에  html 로 변환됨. ( babel 도구 이용 )
+     즉 JSX는 웹브라우저에서 직접 사용이 불가능한 비표준문법임.
+
+  2) 특징
+  
+    - 반드시 root태그가 있어야 됨.
+    - JSX에서 JS의 변수값등을 출력할 때는 {변수값} 사용한다.
+    - {변수값}는 산술연산자,비교연산자,논리연산자,3항연산자 사용 가능.
+    - 논리값(true/false) 와 null은 {변수값} 사용시 출력이 안됨.
+    - CSS 적용하는 방법
+       가. html의 class 속성
+         - class 속성명 대신에 className을 사용해야 된다.
+	 예> <div className="xxx">
+
+       나. html의 style 속성
+         - style 사용할 때는 반드시 중첩 중괄호를 사용해야 된다.
+	  예> <div style={{color:red}}
+
+
+       * 주의할점
+        이전 css 문법의 사용했던 케밥표기법( font-size, background-color)대신에
+	카멜표기법( fontSize, backgroundColor )을 사용해야 된다.
+
+    - && 이용한 조건부 랜더링 ( ******************** )
+
+      예> { 변수 && <Menu />} <=== 변수 true 이면 <Menu /> 컴포넌트가 랜더링됨.
+                                     false 이면 <Menu /> 컴포넌트가 랜더링안됨.
+
+
+    - {...변수} 형식의 spread 연산자 사용 가능
+
+    - 이벤트 구현식 이벤트핸들러는 카멜표기법을 사용해야 된다.
+
+     예> <button onClick={go}>OK</button>
+
+     - JSX 주석
+       {/*  JSX 주석 */}
