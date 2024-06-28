@@ -12,9 +12,12 @@ Reactjs 강좌정리
        - 현재 개발 방법
        - 일반함수 가능
          arrow 함수 가능
+       - 클래스 컴포넌트에서만 사용가능한 문법들이 있었음.
+         버전업되면서 함수에서도 사용가능하도록 문법지원(hooks 지원)
 
     나. 클래스
        - 과거에 주로 사용됨.
+       
 
 2. React 종류 3가지
 
@@ -43,8 +46,8 @@ Reactjs 강좌정리
 
 3. React 프로젝트 생성
 
-  - https://ko.legacy.reactjs.org/docs/create-a-new-react-app.html#createreact-app 참조
-
+  - https://ko.legacy.reactjs.org/docs/create-a-new-react-app.html#createreact-app ( react.js 문법 )
+    https://react.dev/learn/start-a-new-react-project  ( next.js 문법 )
 
    1) 리액트 툴체인
      - facebook 공식 개발툴이고 CSR만 지원됨.
@@ -114,12 +117,13 @@ Reactjs 강좌정리
 6. 컴포넌트(component)
 
  1) 개념
+   - 일반적으로 하나의 *.js 파일이 화면 하나를 구성.
    -웹 화면에서 보여지는 개별적인 블럭 의미. ( JSP의 top.jsp,menu.jsp,bottom.jsp 비슷 )
-   -일반적으로 *.js 파일로 구현됨.
+   -일반적으로 *.js 파일로 구현됨. 
    -*.js 당 *.css 형태로 구현됨. 
     사용방법은 import './App.css' 형식을 사용함.
 
-   -일반적으로 중첩된 형태로 구현됨.
+   -일반적으로 중첩된 형태(계층구조)로 구현됨.
    
  2) 컴포넌트 종류 2가지
 
@@ -193,19 +197,31 @@ Reactjs 강좌정리
     - JSX에서 JS의 변수값등을 출력할 때는 {변수값} 사용한다.
     - {변수값}는 산술연산자,비교연산자,논리연산자,3항연산자 사용 가능.
     - 논리값(true/false) 와 null은 {변수값} 사용시 출력이 안됨.
+      + && 결합해서 조건부 랜더링을 사용할 수 있음.
+      예> { true  && <Menu/>}
     - CSS 적용하는 방법
        가. html의 class 속성
          - class 속성명 대신에 className을 사용해야 된다.
 	 예> <div className="xxx">
 
-       나. html의 style 속성
-         - style 사용할 때는 반드시 중첩 중괄호를 사용해야 된다.
-	  예> <div style={{color:red}}
+       나. html의 <label for=""> 속성
+          - for 속성명 대신에 htmlFor을 사용해야 된다.
+          예> <label htmlFor="xxx">
 
+       다. html의 style 속성
+         - style 사용할 때는 반드시 중첩 중괄호를 사용해야 된다.
+	  예> 
+	      var css = {key:value, key:value};
+	  
+	     <div style={css}
+             <div style={{key:value, key:value}}
 
        * 주의할점
         이전 css 문법의 사용했던 케밥표기법( font-size, background-color)대신에
 	카멜표기법( fontSize, backgroundColor )을 사용해야 된다.
+
+         예> <div style={{fontSize:"red", backgroundColor:"yellow"}}
+
 
     - && 이용한 조건부 랜더링 ( ******************** )
 
@@ -221,3 +237,43 @@ Reactjs 강좌정리
 
      - JSX 주석
        {/*  JSX 주석 */}
+
+   ==> 결론은 JSX에서 JS 사용할때는 반드시 {} 사용한다.
+
+
+8. image 사용하기
+
+  - 반드시 src 폴더에 저장하고
+    import 해서 사용 권장.
+
+  - 실습
+    가. src/assets 폴더 생성
+    나. 이미지 저장
+    다. import 해서 이미지 사용
+
+     예>
+        import daum from './assets/daum.png';
+
+	<img src={daum} width="100" height="100" />
+
+
+9. props 
+
+ 1) 용도
+  
+   - 화면 레이아웃이 중첩된 형태로 되어있고
+   이때 부모 컴포넌트에서 자식 컴포넌트에게 데이터를 전달할 때 사용하는 방법. ( 단방향 )
+
+ 2) 특징
+   - 단방향 ( 부모에서 자식으로만 전달 가능 )
+   - 전달되는 데이터 종류 제한이 없음.
+
+
+
+
+
+
+
+
+
+
