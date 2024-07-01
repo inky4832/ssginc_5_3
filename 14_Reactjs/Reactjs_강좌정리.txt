@@ -525,8 +525,62 @@ export default App;
 	다. state 에 새로 생성된 배열 또는 JSON을 저장
 
 
+     4)  state + <input> 사용시 구현 패턴
+
+       - 사용자가 입력하는 값은 기본적으로 html 태그의 value 속성에 저장됨.
+         이때 value={state} 형식으로 사용하면, 사용자가 입력하는 값이 지속적으로 화면에 랜더링이 되어야 하는데
+	 문제는 state 값이 변경되지 않았기 때문에 재랜더링이 안된다.
+	 따라서 value값과 state 값을 일치시키기 위해서 즉 state값을 입력값으로 변경시키기 위해서
+	 onChange 이벤트로 state 값을 변경시켜주는 코드가 필요하다.
 
 
+14.  ref
 
+   1) 개요
 
+    - 일반적으로 JSX 참조할 때 사용됨.
+    - 드물지만 일반값 저장도 가능
 
+   2) 사용방법
+
+      가.  import
+
+          import {useRef} from 'react';
+
+      나.  useRef 사용
+
+          let  xxx = useRef(기본값);
+
+      다.  JSX에 ref 설정
+
+         예> <input  ref={xxx} />
+	    <Child ref={xxx} />
+            <Child ref={xxx=>xxx} />
+
+      라.  JSX 접근 방법
+
+           xxx.current  속성으로 참조 가능
+
+	 
+   3) 부모에서 자식을 참조 가능
+      https://react.dev/reference/react/forwardRef
+
+     - <Child ref={xxx}  userid="홍길동" />
+       ref 속성은 미리 정의된 속성이기 때문에 Child 자식 컴포넌트에서 props로 ref를 전달할 수 없음.
+       Child 컴포넌트에서 App인 부모에서 전달하는 ref 를 얻기 위해서는 forwardRef() 메서드를 사용해야 되고
+       props와 ref를 따로 얻어야 된다.
+
+       예> 
+            const Child=forwardRef(  
+		    (props, ref)=> {    // props와 ref를 따로 받아야 됨.
+		     console.log(props, ref);
+		    return (
+		      <div className="Child">
+			<h2>Child컴포넌ㅌ</h2>
+			아이디:<input  />
+		      </div>
+		     );
+		  } );
+
+   4) 부모에서 자식의 메서드 호출
+     https://react.dev/reference/react/useImperativeHandle
