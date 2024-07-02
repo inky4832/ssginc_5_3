@@ -584,3 +584,126 @@ export default App;
 
    4) 부모에서 자식의 메서드 호출
      https://react.dev/reference/react/useImperativeHandle
+
+      # 자식 컴포넌트
+	      const Child=forwardRef(  
+	    (props, ref)=> {
+	     console.log(props, ref);
+
+	      const input_ref = useRef(null);
+
+	    // 방법1: 외부에서 작성된 함수 선언식 이용 
+	    useImperativeHandle(ref, ()=>({open2})); // ({함수명,함수명2})
+	     //App에서 호출
+	     function open2(){
+	       console.log("open 메서드");
+	     }
+
+	     // 방법2: return {} 안에서 작성된 함수 선언식 이용 
+	     // https://react.dev/reference/react/useImperativeHandle 참조할 것.
+	     useImperativeHandle(ref, ()=>{
+		return {
+		  open(x){
+		    console.log("open 메서드 >>>>>>>>>>>>>>", x);
+		  },
+		  close(){
+		    console.log("close 메서드 >>>>>>>>>>>>>>");
+		  },
+		  input_value(){
+		    return input_ref.current.value;
+		  }
+		}
+	     });
+
+
+	    ////////////////////////////////////
+	    return (
+	      <div className="Child">
+		<h2>Child컴포넌ㅌ</h2>
+		mesg:{props.mesg}<br></br>
+		아이디:<input  ref={input_ref}/>
+	      </div>
+	     );
+	  } );
+	  
+	  export default Child;
+
+    # 부모 컴포넌트
+     function App() {
+
+	  const xxx = useRef(null);
+
+	  function handleEvent(){
+	    // console.log("Child input값 출력:", xxx.current.value);
+	    console.log("Child input값 출력:", xxx.current.input_value());
+
+	    //Child open 메서드
+	    xxx.current.open(100);
+	    xxx.current.close();
+	  }
+
+	  return (
+	    <div className="App">
+	      <h2>App 컴포넌트</h2>
+	      <Child ref={xxx} mesg="hello" /><br></br>
+	      <button onClick={handleEvent}>Child의 input값 얻기</button>
+	    </div>
+	  );
+	}
+
+	export default App;
+
+
+   5) 모달 창
+
+    https://developer.mozilla.org/ko/docs/Web/HTML/Element/dialog 참고
+
+
+
+15.  Context
+   https://react.dev/reference/react/createContext    <== 부모
+   https://react.dev/reference/react/useContext       <== 자식
+   1) 개요
+
+     - prop drilling 현상 방지.
+     - lifting state up 패턴 기반.
+
+   
+   2) 구현
+
+     # 부모 작업
+      
+       import {createContext, useState} from 'react';
+
+      - 저장소 생성
+       
+         const UserContext = createContext(기본값);  // 컨텍스트명은 대문자로 지정함. 컴포넌트 형태로 사용됨.
+
+      - state 생성
+
+          const [name, setName] = useState('홍길동');
+    
+
+      - 자식컴포넌트가 사용할 수 있도록 설정
+
+         function App(){
+
+	   return(
+              <UserContext.Provider value={name}>
+                 <Child />
+              </UserContext.Provider>
+	   );
+
+	 }
+
+
+
+     # 자식 작업
+
+       import {useContext} from 'react';
+
+
+       const value = useContext(UserContext);
+
+
+
